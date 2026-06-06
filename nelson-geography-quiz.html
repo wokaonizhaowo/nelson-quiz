@@ -1,0 +1,1473 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NELSON 地理第一单元互动小测试</title>
+  <style>
+    :root {
+      --ink: #17313a;
+      --muted: #63777d;
+      --line: #cbdbe0;
+      --paper: #fffdf7;
+      --panel: rgba(255, 253, 247, 0.93);
+      --teal: #177e89;
+      --teal-dark: #0d5863;
+      --coral: #e76f51;
+      --gold: #e9b949;
+      --blue: #3a6ea5;
+      --good: #207f5f;
+      --bad: #b9423a;
+      --shadow: 0 18px 55px rgba(18, 47, 55, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.64), rgba(246,250,248,0.96)),
+        url("nelson-geography-bg.png") center top / cover fixed;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 850;
+      letter-spacing: 0;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      box-shadow: 0 12px 26px rgba(23, 126, 137, 0.25);
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3.6vw, 36px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .scorecard {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(76px, 1fr));
+      gap: 8px;
+      min-width: min(360px, 100%);
+    }
+
+    .metric {
+      border: 1px solid rgba(203, 219, 224, 0.82);
+      background: rgba(255, 255, 255, 0.78);
+      border-radius: 8px;
+      padding: 9px 10px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--teal-dark);
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    aside,
+    main {
+      background: var(--panel);
+      border: 1px solid rgba(203, 219, 224, 0.84);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(13px);
+    }
+
+    aside {
+      padding: 16px;
+      position: sticky;
+      top: 16px;
+    }
+
+    .stage-title {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .stage-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .stage-pill {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      border-radius: 8px;
+      min-height: 48px;
+      padding: 8px 10px;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .stage-pill.active {
+      border-color: var(--teal);
+      background: #eaf7f6;
+      color: var(--teal-dark);
+      font-weight: 800;
+    }
+
+    .stage-pill span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+    }
+
+    .dot {
+      aspect-ratio: 1;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      border-radius: 6px;
+      font: 700 12px/1 system-ui, sans-serif;
+      cursor: pointer;
+    }
+
+    .dot.current { outline: 2px solid var(--teal); outline-offset: 2px; }
+    .dot.correct { background: #dbf3e9; border-color: #82c9ad; color: var(--good); }
+    .dot.wrong { background: #ffe5df; border-color: #ef9a87; color: var(--bad); }
+
+    main {
+      min-height: 620px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 8px;
+      background: rgba(203, 219, 224, 0.5);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--teal), var(--gold), var(--coral));
+      transition: width 260ms ease;
+    }
+
+    .card {
+      padding: clamp(18px, 3vw, 30px);
+    }
+
+    .kicker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      background: #e9f4f1;
+      color: var(--teal-dark);
+      padding: 5px 9px;
+      font-weight: 800;
+    }
+
+    .question {
+      margin: 0 0 22px;
+      font-size: clamp(22px, 3.2vw, 32px);
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .options {
+      display: grid;
+      gap: 11px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      min-height: 62px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.92);
+      color: var(--ink);
+      padding: 10px 14px 10px 10px;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .option:hover { transform: translateY(-1px); border-color: var(--teal); }
+    .option.selected { border-color: var(--teal); background: #eaf7f6; }
+    .option.correct { border-color: #66b795; background: #daf4e9; }
+    .option.wrong { border-color: #ec8d78; background: #ffe3dc; }
+
+    .letter {
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--blue);
+      font-weight: 900;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 8px;
+      min-height: 44px;
+      padding: 0 16px;
+      color: white;
+      background: var(--teal);
+      font: 800 15px/1 system-ui, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(23, 126, 137, 0.2);
+    }
+
+    .btn.secondary {
+      background: white;
+      color: var(--teal-dark);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 18px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: white;
+      padding: 16px;
+    }
+
+    .feedback.show { display: block; }
+    .feedback.good { border-color: #8ccfb5; background: #ecfaf4; }
+    .feedback.bad { border-color: #ef9b87; background: #fff0ec; }
+
+    .feedback h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .feedback p {
+      margin: 8px 0 0;
+      color: #314a50;
+      line-height: 1.7;
+    }
+
+    .analysis {
+      white-space: pre-line;
+    }
+
+    .result {
+      display: none;
+      padding: clamp(18px, 3vw, 30px);
+    }
+
+    .result.show { display: block; }
+    .result h2 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 4vw, 36px);
+      letter-spacing: 0;
+    }
+
+    .review-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .review-item {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 820px) {
+      .topbar { align-items: stretch; flex-direction: column; }
+      .scorecard { min-width: 0; }
+      .layout { grid-template-columns: 1fr; }
+      main { order: 1; min-height: 0; }
+      aside { order: 2; }
+      aside { position: static; }
+      .question-grid { grid-template-columns: repeat(10, 1fr); }
+    }
+
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 20px, 1120px); padding-top: 12px; }
+      .scorecard { grid-template-columns: repeat(3, 1fr); }
+      .metric { padding: 8px 6px; }
+      .question-grid { grid-template-columns: repeat(5, 1fr); }
+      .option { grid-template-columns: 34px 1fr; padding-right: 10px; }
+      .letter { width: 30px; height: 30px; }
+      .actions { align-items: stretch; flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">N</div>
+        <div>
+          <h1>NELSON 地理第一单元互动小测试</h1>
+          <div class="subtitle">五四学制六年级下册复习：亚洲与非洲</div>
+        </div>
+      </div>
+      <div class="scorecard" aria-label="答题统计">
+        <div class="metric"><b id="score">0</b><span>答对</span></div>
+        <div class="metric"><b id="streak">0</b><span>连续</span></div>
+        <div class="metric"><b id="accuracy">0%</b><span>正确率</span></div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside>
+        <p class="stage-title">复习阶段</p>
+        <div class="stage-list" id="stageList"></div>
+        <p class="stage-title">题目导航</p>
+        <div class="question-grid" id="questionGrid"></div>
+      </aside>
+
+      <main>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+        <section class="card" id="quizCard">
+          <div class="kicker">
+            <span class="badge" id="stageBadge"></span>
+            <span id="questionCounter"></span>
+            <span id="stageNote"></span>
+          </div>
+          <h2 class="question" id="questionText"></h2>
+          <div class="options" id="options"></div>
+          <div class="actions">
+            <button class="btn secondary" id="prevBtn" type="button">上一题</button>
+            <button class="btn" id="submitBtn" type="button">提交答案</button>
+            <button class="btn secondary" id="nextBtn" type="button">下一题</button>
+          </div>
+          <div class="feedback" id="feedback"></div>
+        </section>
+
+        <section class="result" id="result">
+          <h2 id="resultTitle"></h2>
+          <p id="resultText"></p>
+          <div class="actions">
+            <button class="btn" id="restartBtn" type="button">重新挑战</button>
+            <button class="btn secondary" id="reviewWrongBtn" type="button">查看错题</button>
+          </div>
+          <div class="review-list" id="reviewList"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+  {
+    "id": 1,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲的主体部分位于（ ）",
+    "options": {
+      "A": "北半球、西半球",
+      "B": "北半球、东半球",
+      "C": "南半球、东半球",
+      "D": "南半球、西半球"
+    },
+    "answer": "B",
+    "explanation": "亚洲绝大部分在赤道以北、乌拉尔山以东",
+    "concept": "大洲的半球位置"
+  },
+  {
+    "id": 2,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲是世界第一大洲，其主要依据不包括（ ）",
+    "options": {
+      "A": "面积最大",
+      "B": "跨纬度最广",
+      "C": "东西距离最长",
+      "D": "跨经度最广"
+    },
+    "answer": "D",
+    "explanation": "跨经度最广的是南极洲，亚洲是东西距离最长",
+    "concept": "大洲范围与经度跨度"
+  },
+  {
+    "id": 3,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲与欧洲的分界线是（ ）",
+    "options": {
+      "A": "苏伊士运河",
+      "B": "白令海峡",
+      "C": "乌拉尔山脉、乌拉尔河等",
+      "D": "巴拿马运河"
+    },
+    "answer": "C",
+    "explanation": "乌拉尔山-乌拉尔河-里海-大高加索山脉-黑海-土耳其海峡",
+    "concept": "大洲分界线识记"
+  },
+  {
+    "id": 4,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲与非洲的分界线是（ ）",
+    "options": {
+      "A": "苏伊士运河",
+      "B": "乌拉尔山脉",
+      "C": "土耳其海峡",
+      "D": "白令海峡"
+    },
+    "answer": "A",
+    "explanation": "苏伊士运河沟通了红海和地中海",
+    "concept": "大洲分界线识记"
+  },
+  {
+    "id": 5,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲的地形特点是（ ）",
+    "options": {
+      "A": "以平原为主",
+      "B": "地势中部高、四周低",
+      "C": "地势东南高、西北低",
+      "D": "地势起伏小"
+    },
+    "answer": "B",
+    "explanation": "亚洲中间是青藏高原，四周是平原",
+    "concept": "地形类型与地势特征"
+  },
+  {
+    "id": 6,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "被誉为“世界屋脊”的高原是（ ）",
+    "options": {
+      "A": "巴西高原",
+      "B": "德干高原",
+      "C": "青藏高原",
+      "D": "伊朗高原"
+    },
+    "answer": "C",
+    "explanation": "平均海拔4000米以上",
+    "concept": "亚洲与非洲基础地理知识"
+  },
+  {
+    "id": 7,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲地势中部高、四周低，导致其河流（ ）",
+    "options": {
+      "A": "呈向心状流向中心",
+      "B": "呈放射状流向周边海洋",
+      "C": "全部自西向东流",
+      "D": "流程短小"
+    },
+    "answer": "B",
+    "explanation": "水往低处流，中间高则向四周散开",
+    "concept": "地势特征与影响"
+  },
+  {
+    "id": 8,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲分布面积最广的气候类型是（ ）",
+    "options": {
+      "A": "温带季风气候",
+      "B": "温带大陆性气候",
+      "C": "热带雨林气候",
+      "D": "地中海气候"
+    },
+    "answer": "B",
+    "explanation": "亚洲内陆面积广大",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 9,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲东部和南部季风气候显著，其共同特点是（ ）",
+    "options": {
+      "A": "全年多雨",
+      "B": "雨热同期",
+      "C": "终年干旱",
+      "D": "冬季多雨"
+    },
+    "answer": "B",
+    "explanation": "夏季高温多雨，对农业很有利",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 10,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "世界上人口最多的大洲是（ ）",
+    "options": {
+      "A": "非洲",
+      "B": "欧洲",
+      "C": "亚洲",
+      "D": "北美洲"
+    },
+    "answer": "C",
+    "explanation": "亚洲有40多亿人口",
+    "concept": "人口分布与人口问题"
+  },
+  {
+    "id": 11,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲人口密度最大的地区分布在（ ）",
+    "options": {
+      "A": "东部、南部、东南部",
+      "B": "西部、中部",
+      "C": "北部、西部",
+      "D": "只有东部"
+    },
+    "answer": "A",
+    "explanation": "这里自然条件优越，开发历史早",
+    "concept": "人口分布与人口问题"
+  },
+  {
+    "id": 12,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲被称为“高原大陆”，是因为其地形以（ ）为主",
+    "options": {
+      "A": "平原",
+      "B": "山地",
+      "C": "高原",
+      "D": "丘陵"
+    },
+    "answer": "C",
+    "explanation": "非洲高原面积占全洲60%以上",
+    "concept": "地形类型与地势特征"
+  },
+  {
+    "id": 13,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲地势的整体特征是（ ）",
+    "options": {
+      "A": "中部高、四周低",
+      "B": "东南高、西北低",
+      "C": "西高东低",
+      "D": "北高南低"
+    },
+    "answer": "B",
+    "explanation": "东南部的埃塞俄比亚高原、东非高原等较高",
+    "concept": "地势特征与影响"
+  },
+  {
+    "id": 14,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲被称为“热带大陆”，主要原因是（ ）",
+    "options": {
+      "A": "面积最大的大洲",
+      "B": "绝大部分位于南北回归线之间",
+      "C": "沙漠广阔",
+      "D": "物产丰富"
+    },
+    "answer": "B",
+    "explanation": "赤道横穿中部，大部分在热带",
+    "concept": "非洲纬度位置与气候"
+  },
+  {
+    "id": 15,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "世界上最长的河流是（ ）",
+    "options": {
+      "A": "刚果河",
+      "B": "长江",
+      "C": "尼罗河",
+      "D": "亚马孙河"
+    },
+    "answer": "C",
+    "explanation": "尼罗河全长6670多千米",
+    "concept": "河流流向、径流与注入海洋"
+  },
+  {
+    "id": 16,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲气候类型分布的显著特点是（ ）",
+    "options": {
+      "A": "复杂多样",
+      "B": "以赤道为中心，南北对称分布",
+      "C": "呈半环状",
+      "D": "垂直地带性显著"
+    },
+    "answer": "B",
+    "explanation": "赤道穿过非洲中部，气候带成轴对称",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 17,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲分布最广的气候类型是（ ）",
+    "options": {
+      "A": "热带雨林气候",
+      "B": "热带草原气候",
+      "C": "热带沙漠气候",
+      "D": "地中海气候"
+    },
+    "answer": "B",
+    "explanation": "热带草原气候面积在全球也是最大的",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 18,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲最高的山峰是（ ）",
+    "options": {
+      "A": "乞力马扎罗山",
+      "B": "珠穆朗玛峰",
+      "C": "阿尔卑斯山",
+      "D": "喜马拉雅山"
+    },
+    "answer": "A",
+    "explanation": "赤道雪峰",
+    "concept": "亚洲与非洲基础地理知识"
+  },
+  {
+    "id": 19,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "撒哈拉以南非洲的主要人种是（ ）",
+    "options": {
+      "A": "白色人种",
+      "B": "黑色人种",
+      "C": "黄色人种",
+      "D": "混血人种"
+    },
+    "answer": "B",
+    "explanation": "这里是“黑种人的故乡”",
+    "concept": "非洲人种分布"
+  },
+  {
+    "id": 20,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲物产丰富，被称为（ ）",
+    "options": {
+      "A": "“高原大陆”",
+      "B": "“热带大陆”",
+      "C": "“富饶大陆”",
+      "D": "“冰雪大陆”"
+    },
+    "answer": "C",
+    "explanation": "矿产和生物资源丰富",
+    "concept": "亚洲与非洲基础地理知识"
+  },
+  {
+    "id": 21,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲流经国家最多的国际性河流是（ ）",
+    "options": {
+      "A": "湄公河",
+      "B": "长江",
+      "C": "恒河",
+      "D": "印度河"
+    },
+    "answer": "A",
+    "explanation": "发源于中国，流经中南半岛六国",
+    "concept": "河流流向、径流与注入海洋"
+  },
+  {
+    "id": 22,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "世界上蓄水量最大、最深的淡水湖是（ ）",
+    "options": {
+      "A": "里海",
+      "B": "贝加尔湖",
+      "C": "苏必利尔湖",
+      "D": "死海"
+    },
+    "answer": "B",
+    "explanation": "位于俄罗斯西伯利亚地区",
+    "concept": "亚洲湖泊之最"
+  },
+  {
+    "id": 23,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲陆地最低点是（ ）",
+    "options": {
+      "A": "吐鲁番盆地",
+      "B": "死海",
+      "C": "里海",
+      "D": "刚果盆地"
+    },
+    "answer": "B",
+    "explanation": "湖面低于海平面415米",
+    "concept": "亚洲湖泊之最"
+  },
+  {
+    "id": 24,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "非洲最大的盆地是（ ）",
+    "options": {
+      "A": "塔里木盆地",
+      "B": "刚果盆地",
+      "C": "四川盆地",
+      "D": "柴达木盆地"
+    },
+    "answer": "B",
+    "explanation": "世界上最大的盆地",
+    "concept": "非洲地形区识记"
+  },
+  {
+    "id": 25,
+    "stage": "基础常考点",
+    "stageNote": "课本核心记忆，目标是稳稳拿分。",
+    "prompt": "亚洲面积最大的半岛是（ ）",
+    "options": {
+      "A": "中南半岛",
+      "B": "印度半岛",
+      "C": "阿拉伯半岛",
+      "D": "朝鲜半岛"
+    },
+    "answer": "C",
+    "explanation": "位于亚洲西南部",
+    "concept": "大洲半岛之最"
+  },
+  {
+    "id": 26,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "世界上跨经度最广的大洲是（ ）",
+    "options": {
+      "A": "亚洲",
+      "B": "非洲",
+      "C": "南极洲",
+      "D": "大洋洲"
+    },
+    "answer": "C",
+    "explanation": "解析： 很多同学会错选亚洲（面积最大）。但所有经线都汇聚于极点，所以南极洲跨了所有的360度经度。\n记忆妙招： 找“最广”时，面积/纬度找亚洲，经度找极地（南极洲）。",
+    "concept": "大洲范围与经度跨度"
+  },
+  {
+    "id": 27,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "亚洲和北美洲的分界线是（ ）",
+    "options": {
+      "A": "白令海峡",
+      "B": "苏伊士运河",
+      "C": "土耳其海峡",
+      "D": "巴拿马运河"
+    },
+    "answer": "A",
+    "explanation": "解析： 白令海峡“三线合一”：亚美分界线、俄美分界线、国际日期变更线。\n记忆妙招： “白”代表北极附近的冰雪，联想亚洲和北美洲在北极圈附近的牵手。",
+    "concept": "大洲分界线识记"
+  },
+  {
+    "id": 28,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "亚洲的季风气候主要分布在亚洲的（ ）",
+    "options": {
+      "A": "西部和中部",
+      "B": "东部和南部",
+      "C": "北部和南部",
+      "D": "西部和南部"
+    },
+    "answer": "B",
+    "explanation": "解析： 亚洲西侧接欧洲，北侧是寒带，只有东部（面临太平洋）和南部（面临印度洋）有显著的海陆热力差异，形成季风。",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 29,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "位于亚洲，但属于世界上面积最大的咸水湖的是（ ）",
+    "options": {
+      "A": "贝加尔湖",
+      "B": "死海",
+      "C": "里海",
+      "D": "咸海"
+    },
+    "answer": "C",
+    "explanation": "解析： 里海是“湖”，不是“海”。它是世界上最大的内陆湖（咸水湖）。\n记忆妙招： 里海在陆地里面，所以是湖。",
+    "concept": "亚洲湖泊之最"
+  },
+  {
+    "id": 30,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "关于非洲气候的叙述，错误的是（ ）",
+    "options": {
+      "A": "普遍炎热",
+      "B": "以赤道为中心对称分布",
+      "C": "降水分布很不均匀",
+      "D": "终年湿润，雨林广布"
+    },
+    "answer": "D",
+    "explanation": "解析： 非洲虽然热，但干旱区面积很大（如撒哈拉沙漠）。热带草原气候才是分布最广的，不是终年湿润。",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 31,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "非洲最大的半岛是（ ）",
+    "options": {
+      "A": "阿拉伯半岛",
+      "B": "索马里半岛",
+      "C": "印度半岛",
+      "D": "中南半岛"
+    },
+    "answer": "B",
+    "explanation": "解析： 阿拉伯半岛是亚洲的，也是世界最大的；索马里半岛才是非洲最大的。",
+    "concept": "大洲半岛之最"
+  },
+  {
+    "id": 32,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "非洲人口出生率高、增长快，带来的问题不包括（ ）",
+    "options": {
+      "A": "粮食短缺",
+      "B": "资源压力大",
+      "C": "劳动力严重短缺",
+      "D": "生态环境破坏"
+    },
+    "answer": "C",
+    "explanation": "解析： 非洲人口增长过快，导致的是劳动力过剩和环境压力，而不是短缺。",
+    "concept": "人口分布与人口问题"
+  },
+  {
+    "id": 33,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "乞力马扎罗山位于赤道附近却终年积雪，主要原因是（ ）",
+    "options": {
+      "A": "纬度高",
+      "B": "海拔高",
+      "C": "降水多",
+      "D": "距海近"
+    },
+    "answer": "B",
+    "explanation": "解析： 地形因素。海拔每升高100米，气温下降约0.6℃。\n记忆妙招： “高处不胜寒”，山越高越冷，和在不在赤道没关系。",
+    "concept": "地形类型与地势特征"
+  },
+  {
+    "id": 34,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "亚洲河流呈放射状流向周边的主要原因是（ ）",
+    "options": {
+      "A": "气候复杂多样",
+      "B": "地形以平原为主",
+      "C": "地势中部高、四周低",
+      "D": "降水丰富"
+    },
+    "answer": "C",
+    "explanation": "解析： 考查地形对河流的影响。地势决定流向。",
+    "concept": "地势特征与影响"
+  },
+  {
+    "id": 35,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "非洲许多国家形成的“单一商品经济”是指（ ）",
+    "options": {
+      "A": "只生产一种农矿产品",
+      "B": "出口初级农矿产品，进口工业制成品",
+      "C": "经济非常发达",
+      "D": "工业基础雄厚"
+    },
+    "answer": "B",
+    "explanation": "解析： 这是一种畸形的经济结构，卖原材料（便宜），买工业品（贵），导致国家贫穷。\n记忆妙招： “单一” = 种类少、档次低（初级产品）。",
+    "concept": "非洲经济结构"
+  },
+  {
+    "id": 36,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "恒河平原常被混淆，实际上“印度河”主要流经的国家是（ ）",
+    "options": {
+      "A": "印度",
+      "B": "中国",
+      "C": "巴基斯坦",
+      "D": "尼泊尔"
+    },
+    "answer": "C",
+    "explanation": "解析： 这是一个经典坑。恒河主要在印度，印度河主要在巴基斯坦。",
+    "concept": "亚洲与非洲基础地理知识"
+  },
+  {
+    "id": 37,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "非洲动物大迁徙的主要原因是（ ）",
+    "options": {
+      "A": "躲避天敌",
+      "B": "降水的季节差异",
+      "C": "地势高低差异",
+      "D": "气温差异"
+    },
+    "answer": "B",
+    "explanation": "解析： 热带草原气候分干、湿两季。动物为了喝水和吃草，必须追逐雨水迁徙。",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 38,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "关于亚洲人口超1亿的国家，下列说法正确的是（ ）",
+    "options": {
+      "A": "亚洲人口超1亿的国家共有14个",
+      "B": "中国、印度、印尼、美国都属于亚洲",
+      "C": "亚洲独占7个人口超1亿的国家",
+      "D": "俄罗斯是亚洲人口最多的国家"
+    },
+    "answer": "C",
+    "explanation": "解析： 世界人口超1亿的国家中，亚洲占了一半以上（7个：中、印、印尼、巴基斯坦、孟加拉国、日本、菲律宾）。",
+    "concept": "人口分布与人口问题"
+  },
+  {
+    "id": 39,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "刚果河注入的大洋是（ ）",
+    "options": {
+      "A": "印度洋",
+      "B": "太平洋",
+      "C": "大西洋",
+      "D": "北冰洋"
+    },
+    "answer": "C",
+    "explanation": "解析： 刚果河向西流，注入大西洋；尼罗河向北流，注入地中海（大西洋属海）。",
+    "concept": "亚洲与非洲基础地理知识"
+  },
+  {
+    "id": 40,
+    "stage": "易错点梳理",
+    "stageNote": "专门拆容易混淆的概念。",
+    "prompt": "夏季，亚洲东部和南部盛行来自海洋的（ ）",
+    "options": {
+      "A": "西北季风",
+      "B": "东北季风",
+      "C": "东南季风和西南季风",
+      "D": "西风"
+    },
+    "answer": "C",
+    "explanation": "解析： 夏季风从海洋吹向陆地（湿润），冬季风从陆地吹向海洋（干燥）。",
+    "concept": "亚洲季风气候"
+  },
+  {
+    "id": 41,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "导致刚果河年均径流量远大于尼罗河的主要原因是（ ）",
+    "options": {
+      "A": "刚果河流程更长",
+      "B": "刚果河流经热带雨林区，降水丰沛",
+      "C": "尼罗河流经盆地",
+      "D": "尼罗河流经热带雨林区"
+    },
+    "answer": "B",
+    "explanation": "解析： 河流径流量主要取决于气候（降水）。刚果河流经赤道热带雨林，全年多雨；尼罗河大部分流经干旱区。",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 42,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "5-11月，东非高原上的野生动物向北迁徙，是因为（ ）",
+    "options": {
+      "A": "北半球草原正值湿季",
+      "B": "南半球正值湿季",
+      "C": "北方气温更高",
+      "D": "躲避南方的严寒"
+    },
+    "answer": "A",
+    "explanation": "解析： 5-11月太阳直射点在北半球，北部的热带草原进入湿季，草木茂盛。\n记忆妙招： 动物是“季节追随者”，哪边下雨去哪边。",
+    "concept": "大洲的半球位置"
+  },
+  {
+    "id": 43,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "亚洲气候复杂多样的原因不包括（ ）",
+    "options": {
+      "A": "南北跨纬度广",
+      "B": "东西距离长",
+      "C": "地形起伏大，地势高低悬殊",
+      "D": "四面临大洋，受海洋影响均匀"
+    },
+    "answer": "D",
+    "explanation": "解析： 亚洲西面与欧洲相连，并不临海，所以受海洋影响不均匀。",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 44,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "亚洲季风气候带来的不利影响是（ ）",
+    "options": {
+      "A": "雨热同期",
+      "B": "旱涝灾害频繁",
+      "C": "降水均匀",
+      "D": "适宜水稻生长"
+    },
+    "answer": "B",
+    "explanation": "解析： 季风具有不稳定性。夏季风强则涝，弱则旱。",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 45,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "尼罗河自南向北流，最终注入（ ）",
+    "options": {
+      "A": "红海",
+      "B": "波斯湾",
+      "C": "地中海",
+      "D": "几内亚湾"
+    },
+    "answer": "C",
+    "explanation": "解析： 记住尼罗河是“北上”进入地中海的。",
+    "concept": "亚洲与非洲基础地理知识"
+  },
+  {
+    "id": 46,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "赤道穿过非洲中部的东非高原，该地却形成了热带草原气候而非热带雨林气候，影响因素是（ ）",
+    "options": {
+      "A": "纬度因素",
+      "B": "地形因素",
+      "C": "海陆因素",
+      "D": "人类活动"
+    },
+    "answer": "B",
+    "explanation": "解析： 地理上的“非地带性”。东非高原海拔高，气温低，对流弱，无法形成雨林，只能形成草原。",
+    "concept": "气候类型与成因"
+  },
+  {
+    "id": 47,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "亚洲河流的流向受什么因素控制（ ）",
+    "options": {
+      "A": "气候",
+      "B": "地势",
+      "C": "海陆位置",
+      "D": "植被"
+    },
+    "answer": "B",
+    "explanation": "解析： 地形地势决定河流流向。",
+    "concept": "地势特征与影响"
+  },
+  {
+    "id": 48,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "关于非洲经济发展的叙述，正确的是（ ）",
+    "options": {
+      "A": "农业不是主要经济部门",
+      "B": "工业基础雄厚",
+      "C": "需通过加强国际合作，改变单一经济结构",
+      "D": "资源贫乏，发展受限"
+    },
+    "answer": "C",
+    "explanation": "解析： 非洲国家需要摆脱“单一商品经济”，发展民族工业。",
+    "concept": "非洲经济结构"
+  },
+  {
+    "id": 49,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "亚洲北部（西伯利亚地区）河流有凌汛现象的主要原因是（ ）",
+    "options": {
+      "A": "纬度高，有结冰期，且由低纬向高纬流",
+      "B": "地势低平",
+      "C": "降水季节变化大",
+      "D": "河流含沙量大"
+    },
+    "answer": "A",
+    "explanation": "解析： 凌汛发生条件： 1. 有结冰期（冷）；2. 从低纬流向高纬（下游还没解冻，上游的水流过来了）。西伯利亚河流符合这两个条件。",
+    "concept": "河流流向、径流与注入海洋"
+  },
+  {
+    "id": 50,
+    "stage": "重难点攻关",
+    "stageNote": "练地理要素之间的因果推理。",
+    "prompt": "描述一个大洲的位置，通常需要从哪些方面入手（ ）",
+    "options": {
+      "A": "只看纬度位置",
+      "B": "只看海陆位置",
+      "C": "半球位置、纬度位置、海陆位置",
+      "D": "只看经济位置"
+    },
+    "answer": "C",
+    "explanation": "解析： 描述位置的标准套路：1. 半球（东/西、南/北）；2. 纬度（五带）；3. 海陆（邻居是谁，靠什么洋）。",
+    "concept": "区域地理位置描述方法"
+  }
+];
+
+    const state = {
+      index: 0,
+      selected: null,
+      answered: Array(questions.length).fill(null),
+      score: 0,
+      streak: 0,
+      maxStreak: 0,
+      reviewedWrong: false,
+    };
+
+    const els = {
+      stageList: document.querySelector("#stageList"),
+      questionGrid: document.querySelector("#questionGrid"),
+      score: document.querySelector("#score"),
+      streak: document.querySelector("#streak"),
+      accuracy: document.querySelector("#accuracy"),
+      progressBar: document.querySelector("#progressBar"),
+      stageBadge: document.querySelector("#stageBadge"),
+      questionCounter: document.querySelector("#questionCounter"),
+      stageNote: document.querySelector("#stageNote"),
+      questionText: document.querySelector("#questionText"),
+      options: document.querySelector("#options"),
+      feedback: document.querySelector("#feedback"),
+      prevBtn: document.querySelector("#prevBtn"),
+      submitBtn: document.querySelector("#submitBtn"),
+      nextBtn: document.querySelector("#nextBtn"),
+      quizCard: document.querySelector("#quizCard"),
+      result: document.querySelector("#result"),
+      resultTitle: document.querySelector("#resultTitle"),
+      resultText: document.querySelector("#resultText"),
+      restartBtn: document.querySelector("#restartBtn"),
+      reviewWrongBtn: document.querySelector("#reviewWrongBtn"),
+      reviewList: document.querySelector("#reviewList"),
+    };
+
+    const stageStarts = [
+      { label: "基础常考点", start: 0, end: 24 },
+      { label: "易错点梳理", start: 25, end: 39 },
+      { label: "重难点攻关", start: 40, end: 49 },
+    ];
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      }[char]));
+    }
+
+    function answeredCount() {
+      return state.answered.filter(Boolean).length;
+    }
+
+    function updateStats() {
+      const done = answeredCount();
+      els.score.textContent = state.score;
+      els.streak.textContent = state.streak;
+      els.accuracy.textContent = done ? Math.round((state.score / done) * 100) + "%" : "0%";
+      els.progressBar.style.width = `${(done / questions.length) * 100}%`;
+    }
+
+    function buildStageList() {
+      els.stageList.innerHTML = stageStarts.map(stage => `
+        <button class="stage-pill" type="button" data-jump="${stage.start}">
+          ${stage.label}<span>${stage.start + 1}-${stage.end + 1}题</span>
+        </button>
+      `).join("");
+      els.stageList.querySelectorAll("button").forEach(button => {
+        button.addEventListener("click", () => goTo(Number(button.dataset.jump)));
+      });
+    }
+
+    function buildGrid() {
+      els.questionGrid.innerHTML = questions.map((question, index) => `
+        <button class="dot" type="button" data-index="${index}" aria-label="第${question.id}题">${question.id}</button>
+      `).join("");
+      els.questionGrid.querySelectorAll("button").forEach(button => {
+        button.addEventListener("click", () => goTo(Number(button.dataset.index)));
+      });
+    }
+
+    function renderQuestion() {
+      const question = questions[state.index];
+      const record = state.answered[state.index];
+      state.selected = record ? record.selected : null;
+
+      els.quizCard.style.display = "";
+      els.result.classList.remove("show");
+      els.stageBadge.textContent = question.stage;
+      els.questionCounter.textContent = `第 ${question.id} / ${questions.length} 题`;
+      els.stageNote.textContent = question.stageNote;
+      els.questionText.textContent = question.prompt;
+
+      els.options.innerHTML = Object.entries(question.options).map(([letter, text]) => `
+        <button class="option" type="button" data-choice="${letter}">
+          <span class="letter">${letter}</span>
+          <span>${escapeHtml(text)}</span>
+        </button>
+      `).join("");
+
+      els.options.querySelectorAll(".option").forEach(button => {
+        button.addEventListener("click", () => selectOption(button.dataset.choice));
+      });
+
+      els.prevBtn.disabled = state.index === 0;
+      els.nextBtn.textContent = state.index === questions.length - 1 ? "看结果" : "下一题";
+      els.submitBtn.disabled = Boolean(record);
+      els.submitBtn.textContent = record ? "已提交" : "提交答案";
+
+      if (record) {
+        paintOptions(record.selected, question.answer);
+        showFeedback(record.correct);
+      } else {
+        els.feedback.className = "feedback";
+        els.feedback.innerHTML = "";
+      }
+
+      refreshNavigation();
+      updateStats();
+    }
+
+    function refreshNavigation() {
+      els.questionGrid.querySelectorAll(".dot").forEach((button, index) => {
+        const record = state.answered[index];
+        button.className = "dot";
+        if (index === state.index) button.classList.add("current");
+        if (record?.correct) button.classList.add("correct");
+        if (record && !record.correct) button.classList.add("wrong");
+      });
+
+      els.stageList.querySelectorAll(".stage-pill").forEach((button, i) => {
+        const stage = stageStarts[i];
+        button.classList.toggle("active", state.index >= stage.start && state.index <= stage.end);
+      });
+    }
+
+    function selectOption(choice) {
+      if (state.answered[state.index]) return;
+      state.selected = choice;
+      els.options.querySelectorAll(".option").forEach(button => {
+        button.classList.toggle("selected", button.dataset.choice === choice);
+      });
+    }
+
+    function paintOptions(selected, answer) {
+      els.options.querySelectorAll(".option").forEach(button => {
+        const choice = button.dataset.choice;
+        button.classList.toggle("selected", choice === selected);
+        button.classList.toggle("correct", choice === answer);
+        button.classList.toggle("wrong", choice === selected && choice !== answer);
+      });
+    }
+
+    function submitAnswer() {
+      if (!state.selected || state.answered[state.index]) return;
+      const question = questions[state.index];
+      const correct = state.selected === question.answer;
+
+      if (correct) {
+        state.score += 1;
+        state.streak += 1;
+        state.maxStreak = Math.max(state.maxStreak, state.streak);
+      } else {
+        state.streak = 0;
+      }
+
+      state.answered[state.index] = { selected: state.selected, correct };
+      els.submitBtn.disabled = true;
+      els.submitBtn.textContent = "已提交";
+      paintOptions(state.selected, question.answer);
+      showFeedback(correct);
+      refreshNavigation();
+      updateStats();
+    }
+
+    function showFeedback(correct) {
+      const question = questions[state.index];
+      const answerText = `${question.answer}. ${question.options[question.answer]}`;
+      const selectedText = state.selected ? `${state.selected}. ${question.options[state.selected]}` : "";
+
+      els.feedback.className = `feedback show ${correct ? "good" : "bad"}`;
+      if (correct) {
+        els.feedback.innerHTML = `
+          <h2>你太厉害了！连续答对第 ${state.streak} 题！</h2>
+          <p><strong>考点：</strong>${escapeHtml(question.concept)}</p>
+          <p>${escapeHtml(question.explanation)}</p>
+        `;
+        return;
+      }
+
+      els.feedback.innerHTML = `
+        <h2>这题先收进错题本。</h2>
+        <p><strong>你的选择：</strong>${escapeHtml(selectedText)}</p>
+        <p><strong>正确答案：</strong>${escapeHtml(answerText)}</p>
+        <p><strong>考点：</strong>${escapeHtml(question.concept)}</p>
+        <p class="analysis"><strong>答案分析：</strong>${escapeHtml(question.explanation)}
+做这类题时，先抓题干里的关键词，再把选项和课本概念一一对应。若题目问“原因”或“影响”，优先判断地势、气候、纬度位置、海陆位置之间的因果关系。</p>
+      `;
+    }
+
+    function goTo(index) {
+      state.index = Math.max(0, Math.min(index, questions.length - 1));
+      renderQuestion();
+    }
+
+    function next() {
+      if (state.index === questions.length - 1) {
+        showResult();
+        return;
+      }
+      goTo(state.index + 1);
+    }
+
+    function showResult() {
+      const done = answeredCount();
+      const wrong = state.answered
+        .map((record, index) => (record && !record.correct ? { record, question: questions[index] } : null))
+        .filter(Boolean);
+      const accuracy = done ? Math.round((state.score / done) * 100) : 0;
+
+      els.quizCard.style.display = "none";
+      els.result.classList.add("show");
+      els.resultTitle.textContent = `完成！${state.score} / ${questions.length} 题正确`;
+      els.resultText.textContent = `正确率 ${accuracy}%，最高连续答对 ${state.maxStreak} 题。${wrong.length ? "下面可以集中复盘错题。" : "这套题掌握得很稳，可以进入下一单元了。"}`;
+      els.reviewList.innerHTML = "";
+      state.reviewedWrong = false;
+    }
+
+    function renderWrongReview() {
+      const wrong = state.answered
+        .map((record, index) => (record && !record.correct ? { record, question: questions[index] } : null))
+        .filter(Boolean);
+      if (!wrong.length) {
+        els.reviewList.innerHTML = `<div class="review-item">没有错题，NELSON 这轮很稳。</div>`;
+        return;
+      }
+      els.reviewList.innerHTML = wrong.map(item => {
+        const q = item.question;
+        return `
+          <article class="review-item">
+            <strong>第 ${q.id} 题：${escapeHtml(q.prompt)}</strong><br>
+            你的答案：${escapeHtml(item.record.selected)}；正确答案：${escapeHtml(q.answer)}. ${escapeHtml(q.options[q.answer])}<br>
+            考点：${escapeHtml(q.concept)}<br>
+            解析：${escapeHtml(q.explanation)}
+          </article>
+        `;
+      }).join("");
+    }
+
+    function restart() {
+      state.index = 0;
+      state.selected = null;
+      state.answered = Array(questions.length).fill(null);
+      state.score = 0;
+      state.streak = 0;
+      state.maxStreak = 0;
+      state.reviewedWrong = false;
+      renderQuestion();
+    }
+
+    els.submitBtn.addEventListener("click", submitAnswer);
+    els.prevBtn.addEventListener("click", () => goTo(state.index - 1));
+    els.nextBtn.addEventListener("click", next);
+    els.restartBtn.addEventListener("click", restart);
+    els.reviewWrongBtn.addEventListener("click", renderWrongReview);
+
+    buildStageList();
+    buildGrid();
+    renderQuestion();
+  </script>
+</body>
+</html>
