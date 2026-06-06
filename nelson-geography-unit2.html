@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NELSON 地理第二单元互动小测试</title>
+  <style>
+    :root {
+      --ink: #17313a;
+      --muted: #63777d;
+      --line: #cbdbe0;
+      --panel: rgba(255, 253, 247, 0.93);
+      --teal: #177e89;
+      --teal-dark: #0d5863;
+      --coral: #e76f51;
+      --gold: #e9b949;
+      --blue: #3a6ea5;
+      --good: #207f5f;
+      --bad: #b9423a;
+      --shadow: 0 18px 55px rgba(18, 47, 55, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.64), rgba(246,250,248,0.96)),
+        url("nelson-geography-bg.png") center top / cover fixed;
+    }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 28px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .mark {
+      width: 46px; height: 46px; border-radius: 8px; display: grid; place-items: center;
+      color: white; font-weight: 850; background: linear-gradient(135deg, var(--teal), var(--blue));
+      box-shadow: 0 12px 26px rgba(23, 126, 137, 0.25); flex: 0 0 auto;
+    }
+    h1 { margin: 0; font-size: clamp(22px, 3.6vw, 36px); line-height: 1.08; letter-spacing: 0; }
+    .subtitle { margin-top: 5px; color: var(--muted); font-size: 14px; }
+    .scorecard { display: grid; grid-template-columns: repeat(3, minmax(76px, 1fr)); gap: 8px; min-width: min(360px, 100%); }
+    .metric { border: 1px solid rgba(203,219,224,.82); background: rgba(255,255,255,.78); border-radius: 8px; padding: 9px 10px; text-align: center; backdrop-filter: blur(10px); }
+    .metric b { display: block; font-size: 20px; line-height: 1; color: var(--teal-dark); }
+    .metric span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .layout { display: grid; grid-template-columns: 260px 1fr; gap: 18px; align-items: start; }
+    aside, main { background: var(--panel); border: 1px solid rgba(203,219,224,.84); border-radius: 8px; box-shadow: var(--shadow); backdrop-filter: blur(13px); }
+    aside { padding: 16px; position: sticky; top: 16px; }
+    .stage-title { margin: 0 0 10px; font-size: 14px; color: var(--muted); font-weight: 800; }
+    .stage-list { display: grid; gap: 8px; margin-bottom: 18px; }
+    .stage-pill { border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 8px; min-height: 48px; padding: 8px 10px; text-align: left; font: inherit; cursor: pointer; }
+    .stage-pill.active { border-color: var(--teal); background: #eaf7f6; color: var(--teal-dark); font-weight: 800; }
+    .stage-pill span { display: block; color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 2px; }
+    .question-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+    .dot { aspect-ratio: 1; border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 6px; font: 700 12px/1 system-ui, sans-serif; cursor: pointer; }
+    .dot.current { outline: 2px solid var(--teal); outline-offset: 2px; }
+    .dot.correct { background: #dbf3e9; border-color: #82c9ad; color: var(--good); }
+    .dot.wrong { background: #ffe5df; border-color: #ef9a87; color: var(--bad); }
+    main { min-height: 620px; overflow: hidden; }
+    .progress { height: 8px; background: rgba(203,219,224,.5); }
+    .progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--teal), var(--gold), var(--coral)); transition: width 260ms ease; }
+    .card { padding: clamp(18px, 3vw, 30px); }
+    .kicker { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .badge { border-radius: 999px; background: #e9f4f1; color: var(--teal-dark); padding: 5px 9px; font-weight: 800; }
+    .question { margin: 0 0 22px; font-size: clamp(22px, 3.2vw, 32px); line-height: 1.35; letter-spacing: 0; }
+    .options { display: grid; gap: 11px; margin-bottom: 18px; }
+    .option { display: grid; grid-template-columns: 42px 1fr; align-items: center; gap: 12px; width: 100%; min-height: 62px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.92); color: var(--ink); padding: 10px 14px 10px 10px; text-align: left; font: inherit; cursor: pointer; transition: transform 140ms ease, border-color 140ms ease, background 140ms ease; }
+    .option:hover { transform: translateY(-1px); border-color: var(--teal); }
+    .option.selected { border-color: var(--teal); background: #eaf7f6; }
+    .option.correct { border-color: #66b795; background: #daf4e9; }
+    .option.wrong { border-color: #ec8d78; background: #ffe3dc; }
+    .letter { width: 34px; height: 34px; border-radius: 7px; display: grid; place-items: center; color: white; background: var(--blue); font-weight: 900; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 18px; }
+    .btn { border: 0; border-radius: 8px; min-height: 44px; padding: 0 16px; color: white; background: var(--teal); font: 800 15px/1 system-ui, sans-serif; cursor: pointer; box-shadow: 0 10px 20px rgba(23,126,137,.2); }
+    .btn.secondary { background: white; color: var(--teal-dark); border: 1px solid var(--line); box-shadow: none; }
+    .btn:disabled { opacity: .48; cursor: not-allowed; box-shadow: none; }
+    .feedback { display: none; margin-top: 18px; border-radius: 8px; border: 1px solid var(--line); background: white; padding: 16px; }
+    .feedback.show { display: block; }
+    .feedback.good { border-color: #8ccfb5; background: #ecfaf4; }
+    .feedback.bad { border-color: #ef9b87; background: #fff0ec; }
+    .feedback h2 { margin: 0 0 8px; font-size: 20px; letter-spacing: 0; }
+    .feedback p { margin: 8px 0 0; color: #314a50; line-height: 1.7; }
+    .analysis { white-space: pre-line; }
+    .result { display: none; padding: clamp(18px, 3vw, 30px); }
+    .result.show { display: block; }
+    .result h2 { margin: 0 0 10px; font-size: clamp(24px, 4vw, 36px); letter-spacing: 0; }
+    .review-list { display: grid; gap: 10px; margin-top: 18px; }
+    .review-item { border: 1px solid var(--line); background: white; border-radius: 8px; padding: 12px; line-height: 1.55; }
+    @media (max-width: 820px) {
+      .topbar { align-items: stretch; flex-direction: column; }
+      .scorecard { min-width: 0; }
+      .layout { grid-template-columns: 1fr; }
+      main { order: 1; min-height: 0; }
+      aside { order: 2; position: static; }
+      .question-grid { grid-template-columns: repeat(10, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 20px, 1120px); padding-top: 12px; }
+      .scorecard { grid-template-columns: repeat(3, 1fr); }
+      .metric { padding: 8px 6px; }
+      .question-grid { grid-template-columns: repeat(5, 1fr); }
+      .option { grid-template-columns: 34px 1fr; padding-right: 10px; }
+      .letter { width: 30px; height: 30px; }
+      .actions { align-items: stretch; flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">N</div>
+        <div>
+          <h1>NELSON 地理第二单元互动小测试</h1>
+          <div class="subtitle">五四学制六年级下册复习：第二单元《近观地区》</div>
+        </div>
+      </div>
+      <div class="scorecard" aria-label="答题统计">
+        <div class="metric"><b id="score">0</b><span>答对</span></div>
+        <div class="metric"><b id="streak">0</b><span>连续</span></div>
+        <div class="metric"><b id="accuracy">0%</b><span>正确率</span></div>
+      </div>
+    </header>
+    <div class="layout">
+      <aside>
+        <p class="stage-title">复习阶段</p>
+        <div class="stage-list" id="stageList"></div>
+        <p class="stage-title">题目导航</p>
+        <div class="question-grid" id="questionGrid"></div>
+      </aside>
+      <main>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+        <section class="card" id="quizCard">
+          <div class="kicker"><span class="badge" id="stageBadge"></span><span id="questionCounter"></span><span id="stageNote"></span></div>
+          <h2 class="question" id="questionText"></h2>
+          <div class="options" id="options"></div>
+          <div class="actions">
+            <button class="btn secondary" id="prevBtn" type="button">上一题</button>
+            <button class="btn" id="submitBtn" type="button">提交答案</button>
+            <button class="btn secondary" id="nextBtn" type="button">下一题</button>
+          </div>
+          <div class="feedback" id="feedback"></div>
+        </section>
+        <section class="result" id="result">
+          <h2 id="resultTitle"></h2>
+          <p id="resultText"></p>
+          <div class="actions">
+            <button class="btn" id="restartBtn" type="button">重新挑战</button>
+            <button class="btn secondary" id="reviewWrongBtn" type="button">查看错题</button>
+          </div>
+          <div class="review-list" id="reviewList"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script>
+    const questions = [
+  {
+    "id": 1,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "东南亚地处亚洲与大洋洲、太平洋与印度洋之间的（ ）",
+    "options": {
+      "A": "“十字路口”",
+      "B": "“陆上桥梁”",
+      "C": "“世界油库”",
+      "D": "“寒冷地带”"
+    },
+    "answer": "A",
+    "explanation": "东南亚连接两大洲、两大洋",
+    "concept": "东南亚的位置特点"
+  },
+  {
+    "id": 2,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "马六甲海峡沟通的两个大洋是（ ）",
+    "options": {
+      "A": "太平洋、大西洋",
+      "B": "太平洋、印度洋",
+      "C": "印度洋、大西洋",
+      "D": "北冰洋、太平洋"
+    },
+    "answer": "B",
+    "explanation": "通过马六甲海峡进入太平洋或印度洋",
+    "concept": "东南亚十字路口与马六甲海峡"
+  },
+  {
+    "id": 3,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "东南亚的主要粮食作物是（ ）",
+    "options": {
+      "A": "小麦",
+      "B": "玉米",
+      "C": "水稻",
+      "D": "高粱"
+    },
+    "answer": "C",
+    "explanation": "东南亚高温多雨，适合水稻生长",
+    "concept": "东南亚农业与水稻种植条件"
+  },
+  {
+    "id": 4,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "东南亚中南半岛的地形特征是（ ）",
+    "options": {
+      "A": "中部高、四周低",
+      "B": "山河相间、纵列分布",
+      "C": "以高原为主",
+      "D": "平原广阔"
+    },
+    "answer": "B",
+    "explanation": "山脉和河流南北纵列分布",
+    "concept": "中南半岛山河相间与地势"
+  },
+  {
+    "id": 5,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "世界上最大的棕榈油生产国是（ ）",
+    "options": {
+      "A": "泰国",
+      "B": "菲律宾",
+      "C": "马来西亚",
+      "D": "印度尼西亚"
+    },
+    "answer": "C",
+    "explanation": "马来西亚曾是第一，现在和印尼都是主要产地；考试常考马来西亚",
+    "concept": "西亚区域特征"
+  },
+  {
+    "id": 6,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "西亚地区被称为“三洲五海之地”，其中“三洲”是指（ ）",
+    "options": {
+      "A": "亚、非、欧",
+      "B": "亚、欧、北美",
+      "C": "亚、非、大洋",
+      "D": "亚、欧、南美"
+    },
+    "answer": "A",
+    "explanation": "连接亚洲、非洲、欧洲",
+    "concept": "西亚三洲五海之地"
+  },
+  {
+    "id": 7,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "西亚地区最丰富的矿产资源是（ ）",
+    "options": {
+      "A": "煤炭",
+      "B": "铁矿",
+      "C": "石油",
+      "D": "金刚石"
+    },
+    "answer": "C",
+    "explanation": "这里的石油储量、产量、输出量均居世界首位",
+    "concept": "西亚石油资源"
+  },
+  {
+    "id": 8,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "西亚石油资源主要分布在（ ）",
+    "options": {
+      "A": "红海沿岸",
+      "B": "波斯湾及其沿岸",
+      "C": "地中海沿岸",
+      "D": "黑海沿岸"
+    },
+    "answer": "B",
+    "explanation": "波斯湾及其沿岸是石油富集区",
+    "concept": "西亚石油分布与运输"
+  },
+  {
+    "id": 9,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "西亚地区气候炎热干燥，最缺乏的资源是（ ）",
+    "options": {
+      "A": "土地资源",
+      "B": "森林资源",
+      "C": "水资源",
+      "D": "矿产资源"
+    },
+    "answer": "C",
+    "explanation": "气候干旱，沙漠广布",
+    "concept": "西亚区域特征"
+  },
+  {
+    "id": 10,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "西亚大多数居民信仰的宗教是（ ）",
+    "options": {
+      "A": "佛教",
+      "B": "基督教",
+      "C": "伊斯兰教",
+      "D": "犹太教"
+    },
+    "answer": "C",
+    "explanation": "阿拉伯人大多信仰伊斯兰教",
+    "concept": "西亚居民与宗教"
+  },
+  {
+    "id": 11,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "欧洲西部大部分地区属于（ ）国家",
+    "options": {
+      "A": "发展中",
+      "B": "发达",
+      "C": "贫穷",
+      "D": "新兴"
+    },
+    "answer": "B",
+    "explanation": "这里是世界上发达国家最集中的地区",
+    "concept": "欧洲西部区域特征"
+  },
+  {
+    "id": 12,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "欧洲西部分布面积最广的气候类型是（ ）",
+    "options": {
+      "A": "温带季风气候",
+      "B": "温带海洋性气候",
+      "C": "地中海气候",
+      "D": "寒带气候"
+    },
+    "answer": "B",
+    "explanation": "终年受西风影响，温和湿润",
+    "concept": "欧洲西部区域特征"
+  },
+  {
+    "id": 13,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "欧洲西部的人们称牧草为“绿色金子”，是因为这里（ ）发达",
+    "options": {
+      "A": "种植业",
+      "B": "畜牧业",
+      "C": "渔业",
+      "D": "林业"
+    },
+    "answer": "B",
+    "explanation": "适合牧草生长，畜牧业是支柱",
+    "concept": "欧洲西部气候与畜牧业"
+  },
+  {
+    "id": 14,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "欧洲西部著名的国际性河流，流经国家最多的是（ ）",
+    "options": {
+      "A": "莱茵河",
+      "B": "多瑙河",
+      "C": "泰晤士河",
+      "D": "塞纳河"
+    },
+    "answer": "B",
+    "explanation": "流经9个国家，被称为“国际河流”",
+    "concept": "欧洲西部区域特征"
+  },
+  {
+    "id": 15,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "极地地区的主要气候特征是（ ）",
+    "options": {
+      "A": "酷寒、多狂风、降水稀少",
+      "B": "高温多雨",
+      "C": "终年温和湿润",
+      "D": "四季分明"
+    },
+    "answer": "A",
+    "explanation": "极地三特征：酷寒、干燥、烈风",
+    "concept": "极地地区环境与保护"
+  },
+  {
+    "id": 16,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "南极地区的代表性动物是（ ）",
+    "options": {
+      "A": "北极熊",
+      "B": "企鹅",
+      "C": "袋鼠",
+      "D": "考拉"
+    },
+    "answer": "B",
+    "explanation": "南极的象征",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 17,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "北极地区的代表性动物是（ ）",
+    "options": {
+      "A": "海豹",
+      "B": "企鹅",
+      "C": "北极熊",
+      "D": "驯鹿"
+    },
+    "answer": "C",
+    "explanation": "北极的象征",
+    "concept": "北极地区自然环境"
+  },
+  {
+    "id": 18,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "我国在南极建立的第一个科学考察站是（ ）",
+    "options": {
+      "A": "中山站",
+      "B": "昆仑站",
+      "C": "泰山站",
+      "D": "长城站"
+    },
+    "answer": "D",
+    "explanation": "1985年建立，位于南极半岛附近",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 19,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "我国唯一的北极科学考察站是（ ）",
+    "options": {
+      "A": "长城站",
+      "B": "黄河站",
+      "C": "中山站",
+      "D": "泰山站"
+    },
+    "answer": "B",
+    "explanation": "位于北极地区挪威的斯瓦尔巴群岛",
+    "concept": "北极地区自然环境"
+  },
+  {
+    "id": 20,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "东南亚著名的“吴哥窟”位于（ ）",
+    "options": {
+      "A": "越南",
+      "B": "泰国",
+      "C": "柬埔寨",
+      "D": "缅甸"
+    },
+    "answer": "C",
+    "explanation": "东南亚著名宗教建筑",
+    "concept": "东南亚区域特征"
+  },
+  {
+    "id": 21,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "被誉为“世界油库”的地区是（ ）",
+    "options": {
+      "A": "东南亚",
+      "B": "西亚",
+      "C": "欧洲西部",
+      "D": "北极地区"
+    },
+    "answer": "B",
+    "explanation": "西亚石油左右着世界经济脉搏",
+    "concept": "西亚石油资源"
+  },
+  {
+    "id": 22,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "欧洲西部旅游业发达，下列搭配错误的是（ ）",
+    "options": {
+      "A": "法国—埃菲尔铁塔",
+      "B": "意大利—罗马斗兽场",
+      "C": "挪威—峡湾风光",
+      "D": "希腊—风车"
+    },
+    "answer": "D",
+    "explanation": "风车是荷兰的标志，希腊著名的是帕特农神庙",
+    "concept": "欧洲西部旅游资源"
+  },
+  {
+    "id": 23,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "南极考察的最佳时间通常是（ ）",
+    "options": {
+      "A": "3月至5月",
+      "B": "6月至8月",
+      "C": "9月至11月",
+      "D": "11月至次年2月"
+    },
+    "answer": "D",
+    "explanation": "此时南极是暖季且有极昼",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 24,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "东南亚绝大部分位于（ ）",
+    "options": {
+      "A": "热带",
+      "B": "北温带",
+      "C": "南温带",
+      "D": "北寒带"
+    },
+    "answer": "A",
+    "explanation": "东南亚包括热带雨林和热带季风气候",
+    "concept": "东南亚区域特征"
+  },
+  {
+    "id": 25,
+    "stage": "基础常考点",
+    "stageNote": "各地区位置、资源、气候和景观识记。",
+    "prompt": "沟通波斯湾与阿拉伯海的海峡是（ ）",
+    "options": {
+      "A": "马六甲海峡",
+      "B": "霍尔木兹海峡",
+      "C": "直布罗陀海峡",
+      "D": "白令海峡"
+    },
+    "answer": "B",
+    "explanation": "石油出口的“咽喉”",
+    "concept": "西亚石油分布与运输"
+  },
+  {
+    "id": 26,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "东南亚唯一的内陆国是（ ）",
+    "options": {
+      "A": "越南",
+      "B": "老挝",
+      "C": "柬埔寨",
+      "D": "缅甸"
+    },
+    "answer": "B",
+    "explanation": "解析： 东南亚国家大多临海或由岛屿组成，只有老挝深处内陆。\n记忆妙招： “老”是待在家里（内陆）不出去。",
+    "concept": "东南亚区域特征"
+  },
+  {
+    "id": 27,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "西亚“五海”中，有一个实际上是世界最大的咸水湖，它是（ ）",
+    "options": {
+      "A": "红海",
+      "B": "黑海",
+      "C": "里海",
+      "D": "地中海"
+    },
+    "answer": "C",
+    "explanation": "解析： 里海（Caspian Sea）虽然叫海，但它是被陆地封闭的，是世界上最大的咸水湖。\n记忆妙招： 叫“海”不是海，它是最大的咸水湖。",
+    "concept": "西亚区域特征"
+  },
+  {
+    "id": 28,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "关于欧洲西部地形的叙述，正确的是（ ）",
+    "options": {
+      "A": "以高原为主",
+      "B": "地势中间高、四周低",
+      "C": "以平原为主",
+      "D": "冰川地貌不明显"
+    },
+    "answer": "C",
+    "explanation": "解析： 欧洲西部以平原为主（如西欧平原、波德平原），平均海拔世界最低，这利于海洋湿润气流深入。",
+    "concept": "欧洲西部区域特征"
+  },
+  {
+    "id": 29,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "我国南极科考站中，唯一没有极昼极夜现象的是（ ）",
+    "options": {
+      "A": "长城站",
+      "B": "中山站",
+      "C": "昆仑站",
+      "D": "泰山站"
+    },
+    "answer": "A",
+    "explanation": "解析： 极昼极夜只出现在极圈（66.5°）以内。长城站位于南纬62度左右，在南极圈外，所以没有极昼极夜。\n避坑指南： 考试常考“唯一没有极昼极夜的站”，选长城站。",
+    "concept": "极地地区极昼极夜现象"
+  },
+  {
+    "id": 30,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "极地地区环境脆弱，目前的全球性威胁主要是（ ）",
+    "options": {
+      "A": "森林砍伐",
+      "B": "水土流失",
+      "C": "臭氧层空洞和冰川融化",
+      "D": "城市化过快"
+    },
+    "answer": "C",
+    "explanation": "解析： 臭氧层空洞和冰川融化是目前南极最受关注的环境问题。",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 31,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "东南亚华人华侨的主要祖籍地是（ ）",
+    "options": {
+      "A": "山东、河北",
+      "B": "广东、福建",
+      "C": "四川、云南",
+      "D": "湖南、湖北"
+    },
+    "answer": "B",
+    "explanation": "解析： 由于地理邻近，东南亚华人华侨多源自广东、福建。",
+    "concept": "东南亚区域特征"
+  },
+  {
+    "id": 32,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "西亚的阿拉伯人属于（ ）",
+    "options": {
+      "A": "黑色人种",
+      "B": "黄色人种",
+      "C": "白色人种",
+      "D": "混血人种"
+    },
+    "answer": "C",
+    "explanation": "解析： 这是一个常见误区。阿拉伯人虽然皮肤较黑（晒的），但在人种分类上属于白色人种。",
+    "concept": "西亚居民与人种"
+  },
+  {
+    "id": 33,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "欧洲西部畜牧业发达的自然原因是（ ）",
+    "options": {
+      "A": "劳动力丰富",
+      "B": "机械化水平高",
+      "C": "气候温凉、潮湿，利于牧草生长",
+      "D": "交通便利"
+    },
+    "answer": "C",
+    "explanation": "解析： 题目问的是自然原因。温带海洋性气候让草长得“多汁”，这是天生的条件。",
+    "concept": "欧洲西部温带海洋性气候"
+  },
+  {
+    "id": 34,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "东南亚种植水稻的人文条件是（ ）",
+    "options": {
+      "A": "高温多雨",
+      "B": "土壤肥沃",
+      "C": "人口稠密，劳动力充足",
+      "D": "机械化水平高"
+    },
+    "answer": "C",
+    "explanation": "解析： 题目问的是人文条件。种水稻需要大量体力活，东南亚人口稠密正好提供了劳动力。",
+    "concept": "东南亚农业与水稻种植条件"
+  },
+  {
+    "id": 35,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "“阿拉伯半岛”属于（ ）",
+    "options": {
+      "A": "东南亚",
+      "B": "东亚",
+      "C": "西亚",
+      "D": "欧洲西部"
+    },
+    "answer": "C",
+    "explanation": "解析： 阿拉伯半岛是世界最大半岛，位于西亚。",
+    "concept": "西亚地区与阿拉伯半岛"
+  },
+  {
+    "id": 36,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "被称为“地球上的冷极”的地方是（ ）",
+    "options": {
+      "A": "北极点",
+      "B": "南极大陆",
+      "C": "西伯利亚",
+      "D": "珠穆朗玛峰"
+    },
+    "answer": "B",
+    "explanation": "解析： 南极海拔高、冰层厚，比北极冷得多，是全球最冷的地方。",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 37,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "东南亚的城市大多分布在（ ）",
+    "options": {
+      "A": "山区",
+      "B": "海边",
+      "C": "河流沿岸及河口三角洲",
+      "D": "内陆盆地"
+    },
+    "answer": "C",
+    "explanation": "解析： 水源充足、地势平坦、交通便利是选址的关键。",
+    "concept": "东南亚区域特征"
+  },
+  {
+    "id": 38,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "欧洲西部最大的港口是（ ）",
+    "options": {
+      "A": "伦敦",
+      "B": "汉堡",
+      "C": "鹿特丹",
+      "D": "巴黎"
+    },
+    "answer": "C",
+    "explanation": "解析： 鹿特丹被称为“欧洲大门”。",
+    "concept": "欧洲西部港口"
+  },
+  {
+    "id": 39,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "极地地区降水稀少，被称为（ ）",
+    "options": {
+      "A": "“热带大陆”",
+      "B": "“湿润地区”",
+      "C": "“白色沙漠”",
+      "D": "“富饶大陆”"
+    },
+    "answer": "C",
+    "explanation": "解析： 虽然到处是冰雪，但南极降水极少，所以叫“沙漠”，白色的沙漠。",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 40,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "西亚石油主要通过海运输出，其必经的“石油海峡”是（ ）",
+    "options": {
+      "A": "马六甲海峡",
+      "B": "霍尔木兹海峡",
+      "C": "曼德海峡",
+      "D": "土耳其海峡"
+    },
+    "answer": "B",
+    "explanation": "解析： 霍尔木兹海峡被称为“世界油阀”。",
+    "concept": "西亚石油海峡"
+  },
+  {
+    "id": 41,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "东南亚成为世界重要的热带经济作物产地的主要原因是（ ）",
+    "options": {
+      "A": "地形平坦",
+      "B": "劳动力充足",
+      "C": "湿热的气候条件",
+      "D": "种植历史悠久"
+    },
+    "answer": "C",
+    "explanation": "解析： 湿热（高温多雨）是橡胶、油棕等热带植物最喜欢的环境。",
+    "concept": "东南亚湿热气候与经济作物"
+  },
+  {
+    "id": 42,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "西亚地区水资源匮乏，解决这一问题的有效途径不包括（ ）",
+    "options": {
+      "A": "海水淡化",
+      "B": "大力开采地下水灌溉",
+      "C": "发展节水农业",
+      "D": "跨流域调水"
+    },
+    "answer": "B",
+    "explanation": "解析： 大力开采地下水会导致地面沉降且不可持续。西亚主要靠海水淡化和滴灌技术。",
+    "concept": "西亚干旱气候与水资源"
+  },
+  {
+    "id": 43,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "欧洲西部温带海洋性气候特征显著，其主要影响因素不包括（ ）",
+    "options": {
+      "A": "地形以平原为主，利于海风深入",
+      "B": "位于中纬度大陆西岸",
+      "C": "受北大西洋暖流影响",
+      "D": "离北冰洋近"
+    },
+    "answer": "D",
+    "explanation": "解析： 离北冰洋近会带来寒冷，不是“温和湿润”的原因。平原地形、暖流、西风才是主因。",
+    "concept": "欧洲西部温带海洋性气候"
+  },
+  {
+    "id": 44,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "南极地区比北极地区气温更低的主要原因是（ ）",
+    "options": {
+      "A": "南极以陆地为主，海拔更高",
+      "B": "南极有极昼极夜",
+      "C": "南极降水更少",
+      "D": "南极纬度更高"
+    },
+    "answer": "A",
+    "explanation": "解析： 重点！南极是陆地（散热快）且海拔高（冰盖厚），而北极是海洋（吸热多）。",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 45,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "中南半岛的河流多自北向南流，这说明其地势特征是（ ）",
+    "options": {
+      "A": "中高周低",
+      "B": "北高南低",
+      "C": "西高东低",
+      "D": "南高北低"
+    },
+    "answer": "B",
+    "explanation": "解析： 河流向南流，说明北边高南边低。",
+    "concept": "中南半岛山河相间与地势"
+  },
+  {
+    "id": 46,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "西亚波斯湾的石油运往欧洲西部和北美洲，距离最短的航线必经（ ）",
+    "options": {
+      "A": "好望角",
+      "B": "苏伊士运河",
+      "C": "马六甲海峡",
+      "D": "巴拿马运河"
+    },
+    "answer": "B",
+    "explanation": "解析： 苏伊士运河是连接印度洋和大西洋的捷径，不需要绕道非洲南端的好望角。",
+    "concept": "西亚石油分布与运输"
+  },
+  {
+    "id": 47,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "极地考察中，科学家发现南极冰盖正在变薄，这主要与（ ）有关",
+    "options": {
+      "A": "全球气候变暖",
+      "B": "地震频繁",
+      "C": "大气污染",
+      "D": "过度捕捞"
+    },
+    "answer": "A",
+    "explanation": "解析： 温室效应导致两极冰川融化，是全球性环境挑战。",
+    "concept": "南极地区自然环境与科考"
+  },
+  {
+    "id": 48,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "欧洲西部多汁牧草广布，与之相关的气候特征是（ ）",
+    "options": {
+      "A": "夏季高温多雨",
+      "B": "终年温和湿润",
+      "C": "冬季严寒干燥",
+      "D": "全年炎热干燥"
+    },
+    "answer": "B",
+    "explanation": "解析： 牧草不喜欢暴晒，喜欢温和阴雨的天气。",
+    "concept": "欧洲西部气候与畜牧业"
+  },
+  {
+    "id": 49,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "导致东南亚和西亚建筑风格差异（如高脚屋与平顶厚墙房）的主要因素是（ ）",
+    "options": {
+      "A": "地形",
+      "B": "气候",
+      "C": "宗教",
+      "D": "审美"
+    },
+    "answer": "B",
+    "explanation": "解析： 东南亚湿热，高脚屋利于散热防潮；西亚干旱，厚墙平顶利于隔热防风沙。\n逻辑链： 环境决定建筑形态。",
+    "concept": "气候对民居建筑的影响"
+  },
+  {
+    "id": 50,
+    "stage": "重难点攻关",
+    "stageNote": "练地区特征背后的因果关系。",
+    "prompt": "保护极地环境，人人有责。下列行为正确的是（ ）",
+    "options": {
+      "A": "在南极建立永久性定居点",
+      "B": "捕猎企鹅作为宠物",
+      "C": "科学考察时带走所有垃圾",
+      "D": "在极地开采矿产资源"
+    },
+    "answer": "C",
+    "explanation": "解析： 极地保护原则是“除了脚印什么都别留下，除了照片什么都别带走”。",
+    "concept": "极地地区环境与保护"
+  }
+];
+    const state = { index: 0, selected: null, answered: Array(questions.length).fill(null), score: 0, streak: 0, maxStreak: 0 };
+    const els = {
+      stageList: document.querySelector("#stageList"), questionGrid: document.querySelector("#questionGrid"),
+      score: document.querySelector("#score"), streak: document.querySelector("#streak"), accuracy: document.querySelector("#accuracy"),
+      progressBar: document.querySelector("#progressBar"), stageBadge: document.querySelector("#stageBadge"),
+      questionCounter: document.querySelector("#questionCounter"), stageNote: document.querySelector("#stageNote"),
+      questionText: document.querySelector("#questionText"), options: document.querySelector("#options"), feedback: document.querySelector("#feedback"),
+      prevBtn: document.querySelector("#prevBtn"), submitBtn: document.querySelector("#submitBtn"), nextBtn: document.querySelector("#nextBtn"),
+      quizCard: document.querySelector("#quizCard"), result: document.querySelector("#result"), resultTitle: document.querySelector("#resultTitle"),
+      resultText: document.querySelector("#resultText"), restartBtn: document.querySelector("#restartBtn"),
+      reviewWrongBtn: document.querySelector("#reviewWrongBtn"), reviewList: document.querySelector("#reviewList"),
+    };
+    const stageStarts = [
+      { label: "基础常考点", start: 0, end: 24 },
+      { label: "易错点梳理", start: 25, end: 39 },
+      { label: "重难点攻关", start: 40, end: 49 },
+    ];
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+    }
+    function answeredCount() { return state.answered.filter(Boolean).length; }
+    function updateStats() {
+      const done = answeredCount();
+      els.score.textContent = state.score; els.streak.textContent = state.streak;
+      els.accuracy.textContent = done ? Math.round((state.score / done) * 100) + "%" : "0%";
+      els.progressBar.style.width = `${(done / questions.length) * 100}%`;
+    }
+    function buildStageList() {
+      els.stageList.innerHTML = stageStarts.map(stage => `<button class="stage-pill" type="button" data-jump="${stage.start}">${stage.label}<span>${stage.start + 1}-${stage.end + 1}题</span></button>`).join("");
+      els.stageList.querySelectorAll("button").forEach(button => button.addEventListener("click", () => goTo(Number(button.dataset.jump))));
+    }
+    function buildGrid() {
+      els.questionGrid.innerHTML = questions.map((question, index) => `<button class="dot" type="button" data-index="${index}" aria-label="第${question.id}题">${question.id}</button>`).join("");
+      els.questionGrid.querySelectorAll("button").forEach(button => button.addEventListener("click", () => goTo(Number(button.dataset.index))));
+    }
+    function renderQuestion() {
+      const question = questions[state.index]; const record = state.answered[state.index]; state.selected = record ? record.selected : null;
+      els.quizCard.style.display = ""; els.result.classList.remove("show");
+      els.stageBadge.textContent = question.stage; els.questionCounter.textContent = `第 ${question.id} / ${questions.length} 题`; els.stageNote.textContent = question.stageNote;
+      els.questionText.textContent = question.prompt;
+      els.options.innerHTML = Object.entries(question.options).map(([letter, text]) => `<button class="option" type="button" data-choice="${letter}"><span class="letter">${letter}</span><span>${escapeHtml(text)}</span></button>`).join("");
+      els.options.querySelectorAll(".option").forEach(button => button.addEventListener("click", () => selectOption(button.dataset.choice)));
+      els.prevBtn.disabled = state.index === 0; els.nextBtn.textContent = state.index === questions.length - 1 ? "看结果" : "下一题";
+      els.submitBtn.disabled = Boolean(record); els.submitBtn.textContent = record ? "已提交" : "提交答案";
+      if (record) { paintOptions(record.selected, question.answer); showFeedback(record.correct); } else { els.feedback.className = "feedback"; els.feedback.innerHTML = ""; }
+      refreshNavigation(); updateStats();
+    }
+    function refreshNavigation() {
+      els.questionGrid.querySelectorAll(".dot").forEach((button, index) => {
+        const record = state.answered[index]; button.className = "dot";
+        if (index === state.index) button.classList.add("current"); if (record?.correct) button.classList.add("correct"); if (record && !record.correct) button.classList.add("wrong");
+      });
+      els.stageList.querySelectorAll(".stage-pill").forEach((button, i) => {
+        const stage = stageStarts[i]; button.classList.toggle("active", state.index >= stage.start && state.index <= stage.end);
+      });
+    }
+    function selectOption(choice) {
+      if (state.answered[state.index]) return; state.selected = choice;
+      els.options.querySelectorAll(".option").forEach(button => button.classList.toggle("selected", button.dataset.choice === choice));
+    }
+    function paintOptions(selected, answer) {
+      els.options.querySelectorAll(".option").forEach(button => {
+        const choice = button.dataset.choice;
+        button.classList.toggle("selected", choice === selected); button.classList.toggle("correct", choice === answer); button.classList.toggle("wrong", choice === selected && choice !== answer);
+      });
+    }
+    function submitAnswer() {
+      if (!state.selected || state.answered[state.index]) return;
+      const question = questions[state.index]; const correct = state.selected === question.answer;
+      if (correct) { state.score += 1; state.streak += 1; state.maxStreak = Math.max(state.maxStreak, state.streak); } else { state.streak = 0; }
+      state.answered[state.index] = { selected: state.selected, correct };
+      els.submitBtn.disabled = true; els.submitBtn.textContent = "已提交"; paintOptions(state.selected, question.answer); showFeedback(correct); refreshNavigation(); updateStats();
+    }
+    function showFeedback(correct) {
+      const question = questions[state.index]; const answerText = `${question.answer}. ${question.options[question.answer]}`;
+      const selectedText = state.selected ? `${state.selected}. ${question.options[state.selected]}` : "";
+      els.feedback.className = `feedback show ${correct ? "good" : "bad"}`;
+      if (correct) {
+        els.feedback.innerHTML = `<h2>你太厉害了！连续答对第 ${state.streak} 题！</h2><p><strong>考点：</strong>${escapeHtml(question.concept)}</p><p>${escapeHtml(question.explanation)}</p>`;
+        return;
+      }
+      els.feedback.innerHTML = `<h2>这题先收进错题本。</h2><p><strong>你的选择：</strong>${escapeHtml(selectedText)}</p><p><strong>正确答案：</strong>${escapeHtml(answerText)}</p><p><strong>考点：</strong>${escapeHtml(question.concept)}</p><p class="analysis"><strong>答案分析：</strong>${escapeHtml(question.explanation)}
+做第二单元题时，先判断题目属于东南亚、西亚、欧洲西部还是极地地区，再抓住对应关键词：东南亚看湿热和交通位置，西亚看石油和干旱，欧洲西部看海洋性气候和畜牧业，极地看酷寒与环境保护。</p>`;
+    }
+    function goTo(index) { state.index = Math.max(0, Math.min(index, questions.length - 1)); renderQuestion(); }
+    function next() { if (state.index === questions.length - 1) { showResult(); return; } goTo(state.index + 1); }
+    function showResult() {
+      const done = answeredCount(); const wrong = state.answered.map((record, index) => (record && !record.correct ? { record, question: questions[index] } : null)).filter(Boolean);
+      const accuracy = done ? Math.round((state.score / done) * 100) : 0;
+      els.quizCard.style.display = "none"; els.result.classList.add("show");
+      els.resultTitle.textContent = `完成！${state.score} / ${questions.length} 题正确`;
+      els.resultText.textContent = `正确率 ${accuracy}%，最高连续答对 ${state.maxStreak} 题。${wrong.length ? "下面可以集中复盘错题。" : "第二单元的地图感很稳，可以继续推进复习。"}`;
+      els.reviewList.innerHTML = "";
+    }
+    function renderWrongReview() {
+      const wrong = state.answered.map((record, index) => (record && !record.correct ? { record, question: questions[index] } : null)).filter(Boolean);
+      if (!wrong.length) { els.reviewList.innerHTML = `<div class="review-item">没有错题，NELSON 这轮很稳。</div>`; return; }
+      els.reviewList.innerHTML = wrong.map(item => {
+        const q = item.question;
+        return `<article class="review-item"><strong>第 ${q.id} 题：${escapeHtml(q.prompt)}</strong><br>你的答案：${escapeHtml(item.record.selected)}；正确答案：${escapeHtml(q.answer)}. ${escapeHtml(q.options[q.answer])}<br>考点：${escapeHtml(q.concept)}<br>解析：${escapeHtml(q.explanation)}</article>`;
+      }).join("");
+    }
+    function restart() {
+      state.index = 0; state.selected = null; state.answered = Array(questions.length).fill(null); state.score = 0; state.streak = 0; state.maxStreak = 0; renderQuestion();
+    }
+    els.submitBtn.addEventListener("click", submitAnswer); els.prevBtn.addEventListener("click", () => goTo(state.index - 1)); els.nextBtn.addEventListener("click", next);
+    els.restartBtn.addEventListener("click", restart); els.reviewWrongBtn.addEventListener("click", renderWrongReview);
+    buildStageList(); buildGrid(); renderQuestion();
+  </script>
+</body>
+</html>
