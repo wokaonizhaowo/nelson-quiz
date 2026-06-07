@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NELSON 地理第三单元互动小测试</title>
+  <style>
+    :root {
+      --ink: #17313a;
+      --muted: #63777d;
+      --line: #cbdbe0;
+      --panel: rgba(255, 253, 247, 0.93);
+      --teal: #177e89;
+      --teal-dark: #0d5863;
+      --coral: #e76f51;
+      --gold: #e9b949;
+      --blue: #3a6ea5;
+      --good: #207f5f;
+      --bad: #b9423a;
+      --shadow: 0 18px 55px rgba(18, 47, 55, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.64), rgba(246,250,248,0.96)),
+        url("nelson-geography-bg.png") center top / cover fixed;
+    }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 28px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .mark {
+      width: 46px; height: 46px; border-radius: 8px; display: grid; place-items: center;
+      color: white; font-weight: 850; background: linear-gradient(135deg, var(--teal), var(--blue));
+      box-shadow: 0 12px 26px rgba(23, 126, 137, 0.25); flex: 0 0 auto;
+    }
+    h1 { margin: 0; font-size: clamp(22px, 3.6vw, 36px); line-height: 1.08; letter-spacing: 0; }
+    .subtitle { margin-top: 5px; color: var(--muted); font-size: 14px; }
+    .scorecard { display: grid; grid-template-columns: repeat(3, minmax(76px, 1fr)); gap: 8px; min-width: min(360px, 100%); }
+    .metric { border: 1px solid rgba(203,219,224,.82); background: rgba(255,255,255,.78); border-radius: 8px; padding: 9px 10px; text-align: center; backdrop-filter: blur(10px); }
+    .metric b { display: block; font-size: 20px; line-height: 1; color: var(--teal-dark); }
+    .metric span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .layout { display: grid; grid-template-columns: 260px 1fr; gap: 18px; align-items: start; }
+    aside, main { background: var(--panel); border: 1px solid rgba(203,219,224,.84); border-radius: 8px; box-shadow: var(--shadow); backdrop-filter: blur(13px); }
+    aside { padding: 16px; position: sticky; top: 16px; }
+    .stage-title { margin: 0 0 10px; font-size: 14px; color: var(--muted); font-weight: 800; }
+    .stage-list { display: grid; gap: 8px; margin-bottom: 18px; }
+    .stage-pill { border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 8px; min-height: 48px; padding: 8px 10px; text-align: left; font: inherit; cursor: pointer; }
+    .stage-pill.active { border-color: var(--teal); background: #eaf7f6; color: var(--teal-dark); font-weight: 800; }
+    .stage-pill span { display: block; color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 2px; }
+    .question-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+    .dot { aspect-ratio: 1; border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 6px; font: 700 12px/1 system-ui, sans-serif; cursor: pointer; }
+    .dot.current { outline: 2px solid var(--teal); outline-offset: 2px; }
+    .dot.correct { background: #dbf3e9; border-color: #82c9ad; color: var(--good); }
+    .dot.wrong { background: #ffe5df; border-color: #ef9a87; color: var(--bad); }
+    main { min-height: 620px; overflow: hidden; }
+    .progress { height: 8px; background: rgba(203,219,224,.5); }
+    .progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--teal), var(--gold), var(--coral)); transition: width 260ms ease; }
+    .card { padding: clamp(18px, 3vw, 30px); }
+    .kicker { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .badge { border-radius: 999px; background: #e9f4f1; color: var(--teal-dark); padding: 5px 9px; font-weight: 800; }
+    .question { margin: 0 0 22px; font-size: clamp(22px, 3.2vw, 32px); line-height: 1.35; letter-spacing: 0; }
+    .options { display: grid; gap: 11px; margin-bottom: 18px; }
+    .option { display: grid; grid-template-columns: 42px 1fr; align-items: center; gap: 12px; width: 100%; min-height: 62px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.92); color: var(--ink); padding: 10px 14px 10px 10px; text-align: left; font: inherit; cursor: pointer; transition: transform 140ms ease, border-color 140ms ease, background 140ms ease; }
+    .option:hover { transform: translateY(-1px); border-color: var(--teal); }
+    .option.selected { border-color: var(--teal); background: #eaf7f6; }
+    .option.correct { border-color: #66b795; background: #daf4e9; }
+    .option.wrong { border-color: #ec8d78; background: #ffe3dc; }
+    .letter { width: 34px; height: 34px; border-radius: 7px; display: grid; place-items: center; color: white; background: var(--blue); font-weight: 900; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 18px; }
+    .btn { border: 0; border-radius: 8px; min-height: 44px; padding: 0 16px; color: white; background: var(--teal); font: 800 15px/1 system-ui, sans-serif; cursor: pointer; box-shadow: 0 10px 20px rgba(23,126,137,.2); }
+    .btn.secondary { background: white; color: var(--teal-dark); border: 1px solid var(--line); box-shadow: none; }
+    .btn:disabled { opacity: .48; cursor: not-allowed; box-shadow: none; }
+    .feedback { display: none; margin-top: 18px; border-radius: 8px; border: 1px solid var(--line); background: white; padding: 16px; }
+    .feedback.show { display: block; }
+    .feedback.good { border-color: #8ccfb5; background: #ecfaf4; }
+    .feedback.bad { border-color: #ef9b87; background: #fff0ec; }
+    .feedback h2 { margin: 0 0 8px; font-size: 20px; letter-spacing: 0; }
+    .feedback p { margin: 8px 0 0; color: #314a50; line-height: 1.7; }
+    .analysis { white-space: pre-line; }
+    .result { display: none; padding: clamp(18px, 3vw, 30px); }
+    .result.show { display: block; }
+    .result h2 { margin: 0 0 10px; font-size: clamp(24px, 4vw, 36px); letter-spacing: 0; }
+    .review-list { display: grid; gap: 10px; margin-top: 18px; }
+    .review-item { border: 1px solid var(--line); background: white; border-radius: 8px; padding: 12px; line-height: 1.55; }
+    @media (max-width: 820px) {
+      .topbar { align-items: stretch; flex-direction: column; }
+      .scorecard { min-width: 0; }
+      .layout { grid-template-columns: 1fr; }
+      main { order: 1; min-height: 0; }
+      aside { order: 2; position: static; }
+      .question-grid { grid-template-columns: repeat(10, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 20px, 1120px); padding-top: 12px; }
+      .scorecard { grid-template-columns: repeat(3, 1fr); }
+      .metric { padding: 8px 6px; }
+      .question-grid { grid-template-columns: repeat(5, 1fr); }
+      .option { grid-template-columns: 34px 1fr; padding-right: 10px; }
+      .letter { width: 30px; height: 30px; }
+      .actions { align-items: stretch; flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">N</div>
+        <div>
+          <h1>NELSON 地理第三单元互动小测试</h1>
+          <div class="subtitle">五四学制六年级下册复习：第三单元《走近国家》</div>
+        </div>
+      </div>
+      <div class="scorecard" aria-label="答题统计">
+        <div class="metric"><b id="score">0</b><span>答对</span></div>
+        <div class="metric"><b id="streak">0</b><span>连续</span></div>
+        <div class="metric"><b id="accuracy">0%</b><span>正确率</span></div>
+      </div>
+    </header>
+    <div class="layout">
+      <aside>
+        <p class="stage-title">复习阶段</p>
+        <div class="stage-list" id="stageList"></div>
+        <p class="stage-title">题目导航</p>
+        <div class="question-grid" id="questionGrid"></div>
+      </aside>
+      <main>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+        <section class="card" id="quizCard">
+          <div class="kicker"><span class="badge" id="stageBadge"></span><span id="questionCounter"></span><span id="stageNote"></span></div>
+          <h2 class="question" id="questionText"></h2>
+          <div class="options" id="options"></div>
+          <div class="actions">
+            <button class="btn secondary" id="prevBtn" type="button">上一题</button>
+            <button class="btn" id="submitBtn" type="button">提交答案</button>
+            <button class="btn secondary" id="nextBtn" type="button">下一题</button>
+          </div>
+          <div class="feedback" id="feedback"></div>
+        </section>
+        <section class="result" id="result">
+          <h2 id="resultTitle"></h2>
+          <p id="resultText"></p>
+          <div class="actions">
+            <button class="btn" id="restartBtn" type="button">重新挑战</button>
+            <button class="btn secondary" id="reviewWrongBtn" type="button">查看错题</button>
+          </div>
+          <div class="review-list" id="reviewList"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script>
+    const questions = [
+  {
+    "id": 1,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "日本领土组成的四个大岛中，面积最大的是（ ）",
+    "options": {
+      "A": "北海道岛",
+      "B": "本州岛",
+      "C": "四国岛",
+      "D": "九州岛"
+    },
+    "answer": "B",
+    "explanation": "本州岛面积最大，富士山也位于此",
+    "concept": "日本领土组成"
+  },
+  {
+    "id": 2,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "日本的最高峰，也是著名旅游胜地的是（ ）",
+    "options": {
+      "A": "珠穆朗玛峰",
+      "B": "乞力马扎罗山",
+      "C": "富士山",
+      "D": "白朗峰"
+    },
+    "answer": "C",
+    "explanation": "著名活火山",
+    "concept": "日本自然景观"
+  },
+  {
+    "id": 3,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "日本工业区主要分布在（ ）",
+    "options": {
+      "A": "日本海沿岸",
+      "B": "太平洋沿岸及濑户内海沿岸",
+      "C": "内陆山区",
+      "D": "北海道北部"
+    },
+    "answer": "B",
+    "explanation": "为了方便进口原料和出口工业品",
+    "concept": "日本工业布局与外向型经济"
+  },
+  {
+    "id": 4,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "目前印度的人口数量居世界（ ）",
+    "options": {
+      "A": "第一位",
+      "B": "第二位",
+      "C": "第三位",
+      "D": "第四位"
+    },
+    "answer": "B",
+    "explanation": "根据多数教材和速记清单，印度为世界第二人口大国",
+    "concept": "印度国家特征"
+  },
+  {
+    "id": 5,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "印度被称为“世界办公室”，是因为其（ ）发达",
+    "options": {
+      "A": "航天工业",
+      "B": "采矿业",
+      "C": "服务外包产业",
+      "D": "纺织工业"
+    },
+    "answer": "C",
+    "explanation": "软件产业全球领先",
+    "concept": "印度服务外包产业"
+  },
+  {
+    "id": 6,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "给印度带来丰沛降水，但也常造成旱涝灾害的季风是（ ）",
+    "options": {
+      "A": "东北季风",
+      "B": "西南季风",
+      "C": "西北季风",
+      "D": "东南季风"
+    },
+    "answer": "B",
+    "explanation": "夏季风带来降水，但不稳定",
+    "concept": "印度国家特征"
+  },
+  {
+    "id": 7,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "德国位于欧洲的中心，被称为欧洲的（ ）",
+    "options": {
+      "A": "“世界屋脊”",
+      "B": "“十字路口”",
+      "C": "“原材料仓库”",
+      "D": "“花园国家”"
+    },
+    "answer": "B",
+    "explanation": "地处欧洲心脏地带",
+    "concept": "德国国家特征"
+  },
+  {
+    "id": 8,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "德国最著名的传统工业区是（ ）",
+    "options": {
+      "A": "鲁尔区",
+      "B": "慕尼黑",
+      "C": "柏林",
+      "D": "汉堡"
+    },
+    "answer": "A",
+    "explanation": "传统的煤炭与钢铁工业基地",
+    "concept": "德国国家特征"
+  },
+  {
+    "id": 9,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "埃及绝大部分领土位于（ ）洲",
+    "options": {
+      "A": "非洲",
+      "B": "亚洲",
+      "C": "欧洲",
+      "D": "大洋洲"
+    },
+    "answer": "A",
+    "explanation": "苏伊士运河以东的西奈半岛属于亚洲，主体在非洲",
+    "concept": "埃及苏伊士运河与交通位置"
+  },
+  {
+    "id": 10,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "埃及的“生命之河”是（ ）",
+    "options": {
+      "A": "刚果河",
+      "B": "亚马孙河",
+      "C": "尼罗河",
+      "D": "密西西比河"
+    },
+    "answer": "C",
+    "explanation": "世界第一长河，也是埃及的命脉",
+    "concept": "埃及国家特征"
+  },
+  {
+    "id": 11,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "沟通红海与地中海，缩短了大西洋与印度洋航程的是（ ）",
+    "options": {
+      "A": "巴拿马运河",
+      "B": "苏伊士运河",
+      "C": "马六甲海峡",
+      "D": "土耳其海峡"
+    },
+    "answer": "B",
+    "explanation": "亚非分界线，连接地中海与红海",
+    "concept": "印度国家特征"
+  },
+  {
+    "id": 12,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "美国领土主体部分位于（ ）",
+    "options": {
+      "A": "亚欧大陆",
+      "B": "南美洲",
+      "C": "北美洲",
+      "D": "大洋洲"
+    },
+    "answer": "C",
+    "explanation": "美国领土跨北美洲和大洋洲，主体在北美",
+    "concept": "美国国家特征"
+  },
+  {
+    "id": 13,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "美国的领土组成中，位于大洋洲的海外州是（ ）",
+    "options": {
+      "A": "阿拉斯加州",
+      "B": "加利福尼亚州",
+      "C": "夏威夷州",
+      "D": "佛罗里达州"
+    },
+    "answer": "C",
+    "explanation": "太平洋中的群岛",
+    "concept": "美国国家特征"
+  },
+  {
+    "id": 14,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "美国最大的高新技术产业中心“硅谷”位于（ ）附近",
+    "options": {
+      "A": "纽约",
+      "B": "华盛顿",
+      "C": "圣弗朗西斯科（旧金山）",
+      "D": "休斯敦"
+    },
+    "answer": "C",
+    "explanation": "位于旧金山东南，依托斯坦福大学等",
+    "concept": "美国高新技术产业"
+  },
+  {
+    "id": 15,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "澳大利亚被称为“骑在羊背上的国家”，是因为其（ ）",
+    "options": {
+      "A": "羊毛出口量居世界首位",
+      "B": "羊群喜欢在山背上走",
+      "C": "居民主要靠骑羊代步",
+      "D": "羊长得高大"
+    },
+    "answer": "A",
+    "explanation": "羊毛产量和出口量均居世界首位",
+    "concept": "澳大利亚畜牧业"
+  },
+  {
+    "id": 16,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "澳大利亚特有的古老动物不包括（ ）",
+    "options": {
+      "A": "袋鼠",
+      "B": "考拉",
+      "C": "鸭嘴兽",
+      "D": "斑马"
+    },
+    "answer": "D",
+    "explanation": "斑马是非洲特有动物",
+    "concept": "澳大利亚古老生物"
+  },
+  {
+    "id": 17,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "澳大利亚被称为“坐在矿车上的国家”，是因为其（ ）",
+    "options": {
+      "A": "矿产资源贫乏",
+      "B": "矿产品出口占商品出口额的比重很大",
+      "C": "人们住在矿车里",
+      "D": "交通工具主要是矿车"
+    },
+    "answer": "B",
+    "explanation": "铁、铝土等矿产资源极丰富，大量出口",
+    "concept": "澳大利亚矿产资源"
+  },
+  {
+    "id": 18,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "日本的文化特点是（ ）",
+    "options": {
+      "A": "纯东方文化",
+      "B": "纯西方文化",
+      "C": "东西方兼容",
+      "D": "缺乏特色"
+    },
+    "answer": "C",
+    "explanation": "和服与西装、和屋与洋房共存",
+    "concept": "日本国家特征"
+  },
+  {
+    "id": 19,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "印度最主要的粮食作物是（ ）",
+    "options": {
+      "A": "水稻和小麦",
+      "B": "玉米和大豆",
+      "C": "高粱和青稞",
+      "D": "燕麦和黑麦"
+    },
+    "answer": "A",
+    "explanation": "水稻分布在降水较多的东北部和半岛沿海；小麦在德干高原和恒河上游",
+    "concept": "印度人口与粮食压力"
+  },
+  {
+    "id": 20,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "德国南部工业区的中心是（ ），现为微电子工业中心",
+    "options": {
+      "A": "法兰克福",
+      "B": "慕尼黑",
+      "C": "汉堡",
+      "D": "斯图加特"
+    },
+    "answer": "B",
+    "explanation": "慕尼黑是德国高科技产业的中心",
+    "concept": "德国南部高新技术工业"
+  },
+  {
+    "id": 21,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "埃及最著名的名胜古迹是（ ）",
+    "options": {
+      "A": "泰姬陵",
+      "B": "埃菲尔铁塔",
+      "C": "金字塔",
+      "D": "吴哥窟"
+    },
+    "answer": "C",
+    "explanation": "位于开罗近郊，是古埃及文明象征",
+    "concept": "埃及国家特征"
+  },
+  {
+    "id": 22,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "美国农业生产的主要特点是（ ）",
+    "options": {
+      "A": "依靠手工劳动",
+      "B": "产量极低",
+      "C": "地区生产专门化和机械化",
+      "D": "以畜牧业为主"
+    },
+    "answer": "C",
+    "explanation": "机械化和专门化是美国农业最显著特征",
+    "concept": "美国农业专门化与机械化"
+  },
+  {
+    "id": 23,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "澳大利亚的人口和城市主要分布在（ ）",
+    "options": {
+      "A": "东南沿海",
+      "B": "西部高原",
+      "C": "中部平原",
+      "D": "北部雨林"
+    },
+    "answer": "A",
+    "explanation": "这里气候湿润、海运便利，是发达的农业和工矿业区",
+    "concept": "澳大利亚国家特征"
+  },
+  {
+    "id": 24,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "日本多火山地震的原因是位于（ ）交界处",
+    "options": {
+      "A": "亚欧板块与印度洋板块",
+      "B": "亚欧板块与太平洋板块",
+      "C": "美洲板块与太平洋板块",
+      "D": "非洲板块与亚欧板块"
+    },
+    "answer": "B",
+    "explanation": "地壳活跃，地震频发",
+    "concept": "日本板块位置与地震"
+  },
+  {
+    "id": 25,
+    "stage": "基础常考点",
+    "stageNote": "各国位置、自然特征、产业和标志景观识记。",
+    "prompt": "世界上最大的淡水湖群是（ ）",
+    "options": {
+      "A": "贝加尔湖",
+      "B": "五大湖",
+      "C": "维多利亚湖",
+      "D": "里海"
+    },
+    "answer": "B",
+    "explanation": "美加边境，其中苏必利尔湖是世界面积最大淡水湖",
+    "concept": "北美五大湖"
+  },
+  {
+    "id": 26,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "关于日本经济的叙述，正确的是（ ）",
+    "options": {
+      "A": "矿产资源丰富",
+      "B": "工业原料主要靠进口",
+      "C": "国内市场广大",
+      "D": "属于发展中国家"
+    },
+    "answer": "B",
+    "explanation": "解析： 日本矿产贫乏，国内市场小。经济模式是典型的“进口-加工-出口”型。\n记忆妙招： 日本是“无米之炊”的厨师，原料全靠买，成品全靠卖。",
+    "concept": "日本资源条件与经济模式"
+  },
+  {
+    "id": 27,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "印度的“绿色革命”主要是为了解决（ ）",
+    "options": {
+      "A": "森林覆盖率低的问题",
+      "B": "粮食短缺问题",
+      "C": "环境污染问题",
+      "D": "荒漠化问题"
+    },
+    "answer": "B",
+    "explanation": "解析： 印度的“绿色革命”通过引进优良品种、灌溉和化肥，极大提高了粮食产量。\n避坑指南： 这里的“绿色”是指农作物，不是森林或环保。",
+    "concept": "印度粮食生产"
+  },
+  {
+    "id": 28,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "埃及跨越了两个大洲，它的苏伊士运河以东的领土位于（ ）",
+    "options": {
+      "A": "欧洲",
+      "B": "非洲",
+      "C": "亚洲",
+      "D": "北美洲"
+    },
+    "answer": "C",
+    "explanation": "解析： 西奈半岛位于苏伊士运河以东，属于亚洲。这使埃及成为跨亚非两大洲的国家。\n记忆妙招： 埃及是个“跨界博主”，脚踩非、亚两洲。",
+    "concept": "埃及苏伊士运河与交通位置"
+  },
+  {
+    "id": 29,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "美国的首都和最大城市分别是（ ）",
+    "options": {
+      "A": "纽约、华盛顿",
+      "B": "华盛顿、纽约",
+      "C": "洛杉矶、芝加哥",
+      "D": "华盛顿、休斯敦"
+    },
+    "answer": "B",
+    "explanation": "解析： 首都通常是政治中心（华盛顿），而纽约是美国最大的金融中心和港口。",
+    "concept": "美国城市职能"
+  },
+  {
+    "id": 30,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "澳大利亚的季节与中国（ ）",
+    "options": {
+      "A": "一致",
+      "B": "相反",
+      "C": "晚一个月",
+      "D": "早一个月"
+    },
+    "answer": "B",
+    "explanation": "解析： 澳大利亚在南半球，中国在北半球，季节相反。\n记忆妙招： 悉尼的孩子穿短袖过圣诞节。",
+    "concept": "澳大利亚国家特征"
+  },
+  {
+    "id": 31,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "德国工业分布的趋势是（ ）",
+    "options": {
+      "A": "由南向北发展",
+      "B": "由北向南扩散",
+      "C": "均匀分布",
+      "D": "只集中在鲁尔区"
+    },
+    "answer": "B",
+    "explanation": "解析： 德国传统工业在北部（鲁尔区），新兴高科技工业向南部（慕尼黑）扩散。",
+    "concept": "德国鲁尔区与产业转型"
+  },
+  {
+    "id": 32,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "埃及长绒棉生产的有利条件是（ ）",
+    "options": {
+      "A": "降水异常丰富",
+      "B": "劳动力短缺",
+      "C": "光照充足，灌溉便利",
+      "D": "气候严寒"
+    },
+    "answer": "C",
+    "explanation": "解析： 埃及沙漠广布，但光照极强。尼罗河水提供了充足的灌溉水源，非常适合棉花生长。",
+    "concept": "埃及尼罗河与人口农业"
+  },
+  {
+    "id": 33,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "日本工业中心向海外转移的原因不包括（ ）",
+    "options": {
+      "A": "国内劳动力价格上涨",
+      "B": "国内资源极度丰富",
+      "C": "环保要求提高",
+      "D": "为了靠近消费市场"
+    },
+    "answer": "B",
+    "explanation": "解析： 日本工业转移正是因为国内资源贫乏、劳动力贵且环保压力大。",
+    "concept": "日本工业布局与外向型经济"
+  },
+  {
+    "id": 34,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "印度软件外包产业的发源地是（ ）",
+    "options": {
+      "A": "新德里",
+      "B": "孟买",
+      "C": "加尔各答",
+      "D": "班加罗尔"
+    },
+    "answer": "D",
+    "explanation": "解析： 班加罗尔被誉为“印度的硅谷”。",
+    "concept": "印度软件外包产业"
+  },
+  {
+    "id": 35,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "澳大利亚特有的生物得以保存的根本原因是（ ）",
+    "options": {
+      "A": "长期孤立于大洋中，进化缓慢",
+      "B": "气候异常干旱",
+      "C": "人类开发历史早",
+      "D": "地形平坦"
+    },
+    "answer": "A",
+    "explanation": "解析： 澳大利亚板块在几千万年前就与其他大陆分离，生物进化缓慢且缺乏天敌。\n逻辑链： 孤立大陆 → 进化缓慢 → “活化石”乐园。",
+    "concept": "澳大利亚古老生物"
+  },
+  {
+    "id": 36,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "密西西比河自北向南流，最终注入（ ）",
+    "options": {
+      "A": "太平洋",
+      "B": "大西洋",
+      "C": "墨西哥湾",
+      "D": "哈得孙湾"
+    },
+    "answer": "C",
+    "explanation": "解析： 密西西比河是世界第四长河，流向向南。",
+    "concept": "美国河流"
+  },
+  {
+    "id": 37,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "德国农业产值中，（ ）占有重要地位",
+    "options": {
+      "A": "种植业",
+      "B": "畜牧业",
+      "C": "渔业",
+      "D": "林业"
+    },
+    "answer": "B",
+    "explanation": "解析： 德国气候冷湿，适合牧草生长，乳畜业产值很高。",
+    "concept": "德国农业与畜牧业"
+  },
+  {
+    "id": 38,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "埃及的苏伊士运河归属权属于（ ）",
+    "options": {
+      "A": "英国",
+      "B": "法国",
+      "C": "埃及",
+      "D": "国际共管"
+    },
+    "answer": "C",
+    "explanation": "解析： 1956年埃及正式收回苏伊士运河主权。",
+    "concept": "埃及苏伊士运河与交通位置"
+  },
+  {
+    "id": 39,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "关于美国人口的叙述，错误的是（ ）",
+    "options": {
+      "A": "属于移民国家",
+      "B": "原住居民是印第安人",
+      "C": "华人对美国建设贡献很大",
+      "D": "人口密度全球最高"
+    },
+    "answer": "D",
+    "explanation": "解析： 美国地广人稀，人口密度并不高（亚洲部分国家才是最高）。",
+    "concept": "美国国家特征"
+  },
+  {
+    "id": 40,
+    "stage": "易错点梳理",
+    "stageNote": "专门排查容易混淆的细节。",
+    "prompt": "澳大利亚被称为“矿车上的国家”，其铁矿主要分布在（ ）",
+    "options": {
+      "A": "东部",
+      "B": "中部",
+      "C": "西部",
+      "D": "塔斯马尼亚岛"
+    },
+    "answer": "C",
+    "explanation": "解析： 澳大利亚铁矿主要分布在西部，煤矿在东部。\n记忆妙招： “西铁东煤”（西游记里的铁扇公主在西边）。",
+    "concept": "澳大利亚矿产资源"
+  },
+  {
+    "id": 41,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "日本樱花开放时间自南向北推迟的主要影响因素是（ ）",
+    "options": {
+      "A": "纬度位置",
+      "B": "地形因素",
+      "C": "海陆位置",
+      "D": "人类活动"
+    },
+    "answer": "A",
+    "explanation": "解析： 樱花开放受气温影响。南方纬度低，气温回升早；北方纬度高，回升晚。",
+    "concept": "日本南北纬度差异"
+  },
+  {
+    "id": 42,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "印度水旱灾害频繁的根本原因是（ ）",
+    "options": {
+      "A": "地势高低悬殊",
+      "B": "森林破坏严重",
+      "C": "西南季风不稳定",
+      "D": "气温变化剧烈"
+    },
+    "answer": "C",
+    "explanation": "解析： 西南季风很不稳定。来得早、去得晚或风力强则旱；反之则涝。",
+    "concept": "印度季风与旱涝灾害"
+  },
+  {
+    "id": 43,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "德国鲁尔区由“衰落”走向“新生”，其主要措施是（ ）",
+    "options": {
+      "A": "继续扩大煤炭开采",
+      "B": "放弃所有工业",
+      "C": "发展高新技术产业和服务业",
+      "D": "把工业都迁往国外"
+    },
+    "answer": "C",
+    "explanation": "解析： 鲁尔区的成功转型在于产业结构的调整，从传统的煤钢转向高新技术和服务业。",
+    "concept": "德国鲁尔区与产业转型"
+  },
+  {
+    "id": 44,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "美国东北部乳畜带形成的社会经济条件是（ ）",
+    "options": {
+      "A": "气候冷湿",
+      "B": "城市、人口分布密集，市场广阔",
+      "C": "地势平坦",
+      "D": "水源充足"
+    },
+    "answer": "B",
+    "explanation": "解析： 题目问的是社会经济条件。这里城市密集，人们有消费牛奶和面包的习惯（消费市场）。\n逻辑链： 人多城市多 → 需求大 → 靠近市场（乳畜带）。",
+    "concept": "美国农业带与市场条件"
+  },
+  {
+    "id": 45,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "埃及的人口和农业主要集中分布在尼罗河谷地和三角洲，主要原因是（ ）",
+    "options": {
+      "A": "地势平坦、水源充足",
+      "B": "矿产丰富",
+      "C": "只有这里是平原",
+      "D": "为了方便出口"
+    },
+    "answer": "A",
+    "explanation": "解析： 沙漠国家只有在水源充足（尼罗河）和土地平坦的地方才能发展农业。",
+    "concept": "埃及尼罗河与人口农业"
+  },
+  {
+    "id": 46,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "澳大利亚大分水岭东侧降水丰富，而西侧干旱，影响因素是（ ）",
+    "options": {
+      "A": "纬度因素",
+      "B": "地形因素",
+      "C": "海陆因素",
+      "D": "人类活动"
+    },
+    "answer": "B",
+    "explanation": "解析： 暖湿气流被大分水岭挡住，东侧是迎风坡多雨，西侧是背风坡干旱（雨影效应）。",
+    "concept": "澳大利亚地形对降水的影响"
+  },
+  {
+    "id": 47,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "日本经济结构的特点是（ ）",
+    "options": {
+      "A": "依赖资源出口",
+      "B": "进口原料，出口工业制成品",
+      "C": "农业为主",
+      "D": "纯国内市场驱动"
+    },
+    "answer": "B",
+    "explanation": "解析： 这是日本作为外向型经济强国的核心特征。",
+    "concept": "日本资源条件与经济模式"
+  },
+  {
+    "id": 48,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "美国的高新技术产业对经济的影响不包括（ ）",
+    "options": {
+      "A": "提高生产效率",
+      "B": "增加就业机会",
+      "C": "导致传统工业彻底消失",
+      "D": "推动经济增长"
+    },
+    "answer": "C",
+    "explanation": "解析： 高新技术会带动传统工业转型升级，而非让其彻底消失。",
+    "concept": "美国高新技术产业影响"
+  },
+  {
+    "id": 49,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "澳大利亚气候分布呈现明显的（ ）",
+    "options": {
+      "A": "南北对称分布",
+      "B": "东西对称分布",
+      "C": "半环状分布",
+      "D": "棋盘状分布"
+    },
+    "answer": "C",
+    "explanation": "解析： 澳大利亚降水从北、东、南三面边缘向内陆递减，形成半环状植被和气候带。",
+    "concept": "澳大利亚气候分布"
+  },
+  {
+    "id": 50,
+    "stage": "重难点攻关",
+    "stageNote": "练自然条件对国家经济活动的影响。",
+    "prompt": "印度耕地面积居亚洲首位，但仍需加强粮食生产，主要原因是（ ）",
+    "options": {
+      "A": "气候太冷",
+      "B": "地形多山",
+      "C": "人口增长快，需求大",
+      "D": "农业机械化程度过高"
+    },
+    "answer": "C",
+    "explanation": "解析： 尽管土地多，但由于人口已超14亿且增长快，粮食压力依然巨大。",
+    "concept": "印度人口与粮食压力"
+  }
+];
+    const state = { index: 0, selected: null, answered: Array(questions.length).fill(null), score: 0, streak: 0, maxStreak: 0 };
+    const els = {
+      stageList: document.querySelector("#stageList"), questionGrid: document.querySelector("#questionGrid"),
+      score: document.querySelector("#score"), streak: document.querySelector("#streak"), accuracy: document.querySelector("#accuracy"),
+      progressBar: document.querySelector("#progressBar"), stageBadge: document.querySelector("#stageBadge"),
+      questionCounter: document.querySelector("#questionCounter"), stageNote: document.querySelector("#stageNote"),
+      questionText: document.querySelector("#questionText"), options: document.querySelector("#options"), feedback: document.querySelector("#feedback"),
+      prevBtn: document.querySelector("#prevBtn"), submitBtn: document.querySelector("#submitBtn"), nextBtn: document.querySelector("#nextBtn"),
+      quizCard: document.querySelector("#quizCard"), result: document.querySelector("#result"), resultTitle: document.querySelector("#resultTitle"),
+      resultText: document.querySelector("#resultText"), restartBtn: document.querySelector("#restartBtn"),
+      reviewWrongBtn: document.querySelector("#reviewWrongBtn"), reviewList: document.querySelector("#reviewList"),
+    };
+    const stageStarts = [
+      { label: "基础常考点", start: 0, end: 24 },
+      { label: "易错点梳理", start: 25, end: 39 },
+      { label: "重难点攻关", start: 40, end: 49 },
+    ];
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+    }
+    function answeredCount() { return state.answered.filter(Boolean).length; }
+    function updateStats() {
+      const done = answeredCount();
+      els.score.textContent = state.score; els.streak.textContent = state.streak;
+      els.accuracy.textContent = done ? Math.round((state.score / done) * 100) + "%" : "0%";
+      els.progressBar.style.width = `${(done / questions.length) * 100}%`;
+    }
+    function buildStageList() {
+      els.stageList.innerHTML = stageStarts.map(stage => `<button class="stage-pill" type="button" data-jump="${stage.start}">${stage.label}<span>${stage.start + 1}-${stage.end + 1}题</span></button>`).join("");
+      els.stageList.querySelectorAll("button").forEach(button => button.addEventListener("click", () => goTo(Number(button.dataset.jump))));
+    }
+    function buildGrid() {
+      els.questionGrid.innerHTML = questions.map((question, index) => `<button class="dot" type="button" data-index="${index}" aria-label="第${question.id}题">${question.id}</button>`).join("");
+      els.questionGrid.querySelectorAll("button").forEach(button => button.addEventListener("click", () => goTo(Number(button.dataset.index))));
+    }
+    function renderQuestion() {
+      const question = questions[state.index]; const record = state.answered[state.index]; state.selected = record ? record.selected : null;
+      els.quizCard.style.display = ""; els.result.classList.remove("show");
+      els.stageBadge.textContent = question.stage; els.questionCounter.textContent = `第 ${question.id} / ${questions.length} 题`; els.stageNote.textContent = question.stageNote;
+      els.questionText.textContent = question.prompt;
+      els.options.innerHTML = Object.entries(question.options).map(([letter, text]) => `<button class="option" type="button" data-choice="${letter}"><span class="letter">${letter}</span><span>${escapeHtml(text)}</span></button>`).join("");
+      els.options.querySelectorAll(".option").forEach(button => button.addEventListener("click", () => selectOption(button.dataset.choice)));
+      els.prevBtn.disabled = state.index === 0; els.nextBtn.textContent = state.index === questions.length - 1 ? "看结果" : "下一题";
+      els.submitBtn.disabled = Boolean(record); els.submitBtn.textContent = record ? "已提交" : "提交答案";
+      if (record) { paintOptions(record.selected, question.answer); showFeedback(record.correct); } else { els.feedback.className = "feedback"; els.feedback.innerHTML = ""; }
+      refreshNavigation(); updateStats();
+    }
+    function refreshNavigation() {
+      els.questionGrid.querySelectorAll(".dot").forEach((button, index) => {
+        const record = state.answered[index]; button.className = "dot";
+        if (index === state.index) button.classList.add("current"); if (record?.correct) button.classList.add("correct"); if (record && !record.correct) button.classList.add("wrong");
+      });
+      els.stageList.querySelectorAll(".stage-pill").forEach((button, i) => {
+        const stage = stageStarts[i]; button.classList.toggle("active", state.index >= stage.start && state.index <= stage.end);
+      });
+    }
+    function selectOption(choice) {
+      if (state.answered[state.index]) return; state.selected = choice;
+      els.options.querySelectorAll(".option").forEach(button => button.classList.toggle("selected", button.dataset.choice === choice));
+    }
+    function paintOptions(selected, answer) {
+      els.options.querySelectorAll(".option").forEach(button => {
+        const choice = button.dataset.choice;
+        button.classList.toggle("selected", choice === selected); button.classList.toggle("correct", choice === answer); button.classList.toggle("wrong", choice === selected && choice !== answer);
+      });
+    }
+    function submitAnswer() {
+      if (!state.selected || state.answered[state.index]) return;
+      const question = questions[state.index]; const correct = state.selected === question.answer;
+      if (correct) { state.score += 1; state.streak += 1; state.maxStreak = Math.max(state.maxStreak, state.streak); } else { state.streak = 0; }
+      state.answered[state.index] = { selected: state.selected, correct };
+      els.submitBtn.disabled = true; els.submitBtn.textContent = "已提交"; paintOptions(state.selected, question.answer); showFeedback(correct); refreshNavigation(); updateStats();
+    }
+    function showFeedback(correct) {
+      const question = questions[state.index]; const answerText = `${question.answer}. ${question.options[question.answer]}`;
+      const selectedText = state.selected ? `${state.selected}. ${question.options[state.selected]}` : "";
+      els.feedback.className = `feedback show ${correct ? "good" : "bad"}`;
+      if (correct) {
+        els.feedback.innerHTML = `<h2>你太厉害了！连续答对第 ${state.streak} 题！</h2><p><strong>考点：</strong>${escapeHtml(question.concept)}</p><p>${escapeHtml(question.explanation)}</p>`;
+        return;
+      }
+      els.feedback.innerHTML = `<h2>这题先收进错题本。</h2><p><strong>你的选择：</strong>${escapeHtml(selectedText)}</p><p><strong>正确答案：</strong>${escapeHtml(answerText)}</p><p><strong>考点：</strong>${escapeHtml(question.concept)}</p><p class="analysis"><strong>答案分析：</strong>${escapeHtml(question.explanation)}
+做第三单元题时，先判断题目对应哪个国家，再抓住国家关键词：日本看岛国、地震和外向型工业；印度看季风、人口和软件外包；德国看鲁尔区转型；埃及看尼罗河和苏伊士运河；美国看农业带和高新技术；澳大利亚看特有生物、矿产和东南沿海。</p>`;
+    }
+    function goTo(index) { state.index = Math.max(0, Math.min(index, questions.length - 1)); renderQuestion(); }
+    function next() { if (state.index === questions.length - 1) { showResult(); return; } goTo(state.index + 1); }
+    function showResult() {
+      const done = answeredCount(); const wrong = state.answered.map((record, index) => (record && !record.correct ? { record, question: questions[index] } : null)).filter(Boolean);
+      const accuracy = done ? Math.round((state.score / done) * 100) : 0;
+      els.quizCard.style.display = "none"; els.result.classList.add("show");
+      els.resultTitle.textContent = `完成！${state.score} / ${questions.length} 题正确`;
+      els.resultText.textContent = `正确率 ${accuracy}%，最高连续答对 ${state.maxStreak} 题。${wrong.length ? "下面可以集中复盘错题。" : "第三单元的国家特征抓得很稳，可以准备综合题了。"}`;
+      els.reviewList.innerHTML = "";
+    }
+    function renderWrongReview() {
+      const wrong = state.answered.map((record, index) => (record && !record.correct ? { record, question: questions[index] } : null)).filter(Boolean);
+      if (!wrong.length) { els.reviewList.innerHTML = `<div class="review-item">没有错题，NELSON 这轮很稳。</div>`; return; }
+      els.reviewList.innerHTML = wrong.map(item => {
+        const q = item.question;
+        return `<article class="review-item"><strong>第 ${q.id} 题：${escapeHtml(q.prompt)}</strong><br>你的答案：${escapeHtml(item.record.selected)}；正确答案：${escapeHtml(q.answer)}. ${escapeHtml(q.options[q.answer])}<br>考点：${escapeHtml(q.concept)}<br>解析：${escapeHtml(q.explanation)}</article>`;
+      }).join("");
+    }
+    function restart() {
+      state.index = 0; state.selected = null; state.answered = Array(questions.length).fill(null); state.score = 0; state.streak = 0; state.maxStreak = 0; renderQuestion();
+    }
+    els.submitBtn.addEventListener("click", submitAnswer); els.prevBtn.addEventListener("click", () => goTo(state.index - 1)); els.nextBtn.addEventListener("click", next);
+    els.restartBtn.addEventListener("click", restart); els.reviewWrongBtn.addEventListener("click", renderWrongReview);
+    buildStageList(); buildGrid(); renderQuestion();
+  </script>
+</body>
+</html>

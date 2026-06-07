@@ -58,7 +58,7 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
     a {
@@ -97,6 +97,12 @@
     .unit-two span {
       background: var(--coral);
     }
+    .unit-three span {
+      background: var(--blue);
+    }
+    .unit-three {
+      grid-column: span 1;
+    }
     @media (max-width: 680px) {
       main { width: min(100% - 20px, 920px); padding-top: 18px; }
       .grid { grid-template-columns: 1fr; }
@@ -121,6 +127,11 @@
         <strong>第二单元</strong>
         <p>近观地区：东南亚、西亚、欧洲西部和极地地区。</p>
         <span>开始第二单元</span>
+      </a>
+      <a class="unit-three" href="nelson-geography-unit3.html">
+        <strong>第三单元</strong>
+        <p>走近国家：日本、印度、德国、埃及、美国和澳大利亚。</p>
+        <span>开始第三单元</span>
       </a>
     </section>
   </main>
